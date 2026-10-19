@@ -116,7 +116,9 @@ summary{font-weight:600;cursor:pointer;color:var(--text);font-size:.85rem;outlin
     <p class="mu" style="margin:10px 0 6px">Importer un fichier de sauvegarde .json :</p>
     <input type="file" accept=".json,application/json" onchange="lireFichier(this,importerJSON)">
    </div>
-   <div class="card"><div class="card-title">Zone de test</div>
+   <!-- ZONE DE TEST MASQUÉE PAR DÉFAUT -->
+   <div class="card" id="zone-test-card" style="display:none">
+    <div class="card-title">Zone de test</div>
     <button id="raz" class="btn-primary btn-ghost" style="color:var(--red);margin-bottom:0" onclick="raz()">Remise à zéro complète</button>
    </div>
   </div>
@@ -124,7 +126,8 @@ summary{font-weight:600;cursor:pointer;color:var(--text);font-size:.85rem;outlin
  <nav class="ios-nav">
   <button class="nav-item active" id="nav-synth" onclick="T='synth';rendre()"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7zm4-3h2v10h-2zm4 6h2v4h-2z"/></svg>Synthèse</button>
   <button class="nav-item" id="nav-detail" onclick="T='detail';rendre()"><svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z"/></svg>Détail</button>
-  <button class="nav-item" id="nav-options" onclick="T='options';rendre()"><svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c-.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>Options</button>
+  <!-- ONGLET OPTIONS AVEC CLICS CACHÉS SUR L'ICÔNE -->
+  <button class="nav-item" id="nav-options" onclick="gererClicOptions()"><svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c-.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>Options</button>
  </nav>
 </div>
 
@@ -175,6 +178,7 @@ const SB_KEY = 'sb_publishable_efoSjjwy88avztgJUwg1zA_op-pIFDd';
 const vide = () => ({users:[{id:'a',nom:'Kévin',init:0},{id:'b',nom:'Prescillia',init:0}], ops:[], regles:[], defaut:'a'});
 let S = vide(), U = 'a', T = 'synth', M = '', ED = '', ET = -1, RM = '', ROWS = {};
 const F = {deb:1, cre:1, men:1, pon:1, com:1, roll:1, eq:0};
+let showTestZone = false;
 
 async function chargerCloud(){
   try {
@@ -263,7 +267,7 @@ function projections(uid, jusqua){
   const n = new Date(), r = [];
   for (let i = 1; i <= 2; i++){
     const ym = iso(new Date(n.getFullYear(), n.getMonth()+i, 1)).slice(0,7), d = ym+'-12';
-    if (d > jusqua || S.ops.some(o => o.reg === ym)) continue;
+    if (d > hingga || S.ops.some(o => o.reg === ym)) continue;
     const c = commun(ym); if (Math.abs(c.e) < .005) continue;
     const [du, cr] = c.e > 0 ? [1, 0] : [0, 1], a = Math.abs(c.e), debiteur = S.users[du].id === uid;
     if (!debiteur && S.users[cr].id !== uid) continue;
@@ -300,7 +304,7 @@ function ligne(x, s){
   </div>`;
 }
 
-// Gestion des 7 clics pour verrouiller / déverrouiller le choix des utilisateurs
+// Gestion des 10 clics pour verrouiller / déverrouiller les utilisateurs
 let clickCount = 0;
 let clickTimer = null;
 
@@ -308,7 +312,7 @@ function handleUserClick(){
   clickCount++;
   clearTimeout(clickTimer);
   
-  if (clickCount >= 7){
+  if (clickCount >= 10){
     clickCount = 0;
     S.showMultiButtons = !S.showMultiButtons;
     rendre();
@@ -316,6 +320,29 @@ function handleUserClick(){
   } else {
     clickTimer = setTimeout(() => {
       clickCount = 0;
+    }, 1500);
+  }
+}
+
+// Gestion des 10 clics pour débloquer la zone de test dans l'onglet Options
+let testClickCount = 0;
+let testClickTimer = null;
+
+function gererClicOptions(){
+  T = 'options';
+  rendre();
+  
+  testClickCount++;
+  clearTimeout(testClickTimer);
+  
+  if (testClickCount >= 10){
+    testClickCount = 0;
+    showTestZone = !showTestZone;
+    $('zone-test-card').style.display = showTestZone ? 'block' : 'none';
+    msg(showTestZone ? 'Zone de test débloquée.' : 'Zone de test verrouillée.');
+  } else {
+    testClickTimer = setTimeout(() => {
+      testClickCount = 0;
     }, 1500);
   }
 }
@@ -333,7 +360,7 @@ function rendre(){
     $('seg').innerHTML = S.users.map(u => `<button class="user-btn ${u.id===U?'active':''}" onclick="setU('${u.id}')">${esc(u.nom)}</button>`).join('');
   } else {
     const activeUser = usr(U);
-    $('seg').innerHTML = `<button class="user-btn active" onclick="handleUserClick()" title="Appuyez 7 fois">${esc(activeUser.nom)}</button>`;
+    $('seg').innerHTML = `<button class="user-btn active" onclick="handleUserClick()" title="Appuyez 10 fois">${esc(activeUser.nom)}</button>`;
   }
   
   for (const v of ['synth','detail','options']){
@@ -342,7 +369,7 @@ function rendre(){
   synthese(t); detail();
   $('p-n').value = usr(U).nom;
   $('p-i').value = usr(U).init;
-  $('p-def').value = S.defaut || 'a';
+  $('p-def').value = S.defaut \vert{}\vert{} 'a';$('zone-test-card').style.display = showTestZone ? 'block' : 'none';
 }
 
 function synthese(t){
