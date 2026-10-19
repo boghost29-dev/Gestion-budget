@@ -97,12 +97,6 @@ summary{font-weight:600;cursor:pointer;color:var(--text);font-size:.85rem;outlin
     <div class="fm">
      <label>Nom d’utilisateur<input id="p-n"></label>
      <label>Solde initial (€) (point zéro absolu)<input type="text" id="p-i" placeholder="Ex : -18,44 ou 25,63" autocomplete="off"></label>
-     <label>Utilisateur par défaut au lancement
-      <select id="p-def" style="margin-top:4px">
-       <option value="a">Kévin</option>
-       <option value="b">Prescillia</option>
-      </select>
-     </label>
      <button class="btn-primary" onclick="saveParams()">Enregistrer les paramètres</button>
     </div>
    </details>
@@ -126,8 +120,7 @@ summary{font-weight:600;cursor:pointer;color:var(--text);font-size:.85rem;outlin
  <nav class="ios-nav">
   <button class="nav-item active" id="nav-synth" onclick="T='synth';rendre()"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7zm4-3h2v10h-2zm4 6h2v4h-2z"/></svg>Synthèse</button>
   <button class="nav-item" id="nav-detail" onclick="T='detail';rendre()"><svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z"/></svg>Détail</button>
-  <!-- ONGLET OPTIONS AVEC CLICS CACHÉS SUR L'ICÔNE -->
-  <button class="nav-item" id="nav-options" onclick="gererClicOptions()"><svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c-.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>Options</button>
+  <button class="nav-item" id="nav-options" onclick="gererClicOptions()"><svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c-.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6-3.6z"/></svg>Options</button>
  </nav>
 </div>
 
@@ -171,11 +164,10 @@ summary{font-weight:600;cursor:pointer;color:var(--text);font-size:.85rem;outlin
 <div id="toast"></div>
 
 <script>
-// Configuration Supabase
 const SB_URL = 'https://spbqnbstlnczaensilge.supabase.co';
 const SB_KEY = 'sb_publishable_efoSjjwy88avztgJUwg1zA_op-pIFDd';
 
-const vide = () => ({users:[{id:'a',nom:'Kévin',init:0},{id:'b',nom:'Prescillia',init:0}], ops:[], regles:[], defaut:'a'});
+const vide = () => ({users:[{id:'a',nom:'Kévin',init:0},{id:'b',nom:'Prescillia',init:0}], ops:[], regles:[]});
 let S = vide(), U = 'a', T = 'synth', M = '', ED = '', ET = -1, RM = '', ROWS = {};
 const F = {deb:1, cre:1, men:1, pon:1, com:1, roll:1, eq:0};
 let showTestZone = false;
@@ -189,11 +181,8 @@ async function chargerCloud(){
       const data = await res.json();
       if (data && data.length > 0 && data[0].payload && Object.keys(data[0].payload).length > 0){
         S = data[0].payload;
-        if (!S.defaut) S.defaut = 'a';
-        
         const localUser = localStorage.getItem('mon_budget_user');
-        U = (localUser && S.users.some(u => u.id === localUser)) ? localUser : S.defaut;
-        
+        U = (localUser && S.users.some(u => u.id === localUser)) ? localUser : (S.users[0] ? S.users[0].id : 'a');
         rendre();
         msg('Données synchronisées depuis Supabase.');
       }
@@ -201,7 +190,7 @@ async function chargerCloud(){
   } catch(e){ console.error('Erreur chargement cloud', e); }
   
   const localUser = localStorage.getItem('mon_budget_user');
-  U = (localUser && S.users.some(u => u.id === localUser)) ? localUser : (S.defaut || 'a');
+  U = (localUser && S.users.some(u => u.id === localUser)) ? localUser : (S.users[0] ? S.users[0].id : 'a');
   rendre();
 }
 
@@ -267,7 +256,7 @@ function projections(uid, jusqua){
   const n = new Date(), r = [];
   for (let i = 1; i <= 2; i++){
     const ym = iso(new Date(n.getFullYear(), n.getMonth()+i, 1)).slice(0,7), d = ym+'-12';
-    if (d > hingga || S.ops.some(o => o.reg === ym)) continue;
+    if (d > jusqua || S.ops.some(o => o.reg === ym)) continue;
     const c = commun(ym); if (Math.abs(c.e) < .005) continue;
     const [du, cr] = c.e > 0 ? [1, 0] : [0, 1], a = Math.abs(c.e), debiteur = S.users[du].id === uid;
     if (!debiteur && S.users[cr].id !== uid) continue;
@@ -304,27 +293,50 @@ function ligne(x, s){
   </div>`;
 }
 
-// Gestion des 10 clics pour verrouiller / déverrouiller les utilisateurs
+// Clics pour déverrouiller (10) ou verrouiller (7) les utilisateurs
 let clickCount = 0;
 let clickTimer = null;
 
-function handleUserClick(){
+function handleUserClick(targetUid){
+  // Si le bouton cliqué est le bouton de déverrouillage (mode verrouillé)
+  if (!S.showMultiButtons) {
+    clickCount++;
+    clearTimeout(clickTimer);
+    if (clickCount >= 10){
+      clickCount = 0;
+      S.showMultiButtons = true;
+      sauver();
+      rendre();
+      msg('Mode multi-utilisateurs déverrouillé.');
+    } else {
+      clickTimer = setTimeout(() => { clickCount = 0; }, 1500);
+    }
+    return;
+  }
+
+  // Si on est déjà déverrouillé :
+  // Cliquer sur un autre utilisateur change l'utilisateur
+  if (targetUid !== U) {
+    setU(targetUid);
+    clickCount = 0;
+    return;
+  }
+
+  // Cliquer sur l'utilisateur actif compte les clics pour REBLOQUER (7 clics)
   clickCount++;
   clearTimeout(clickTimer);
-  
-  if (clickCount >= 10){
+  if (clickCount >= 7){
     clickCount = 0;
-    S.showMultiButtons = !S.showMultiButtons;
+    S.showMultiButtons = false;
+    sauver();
     rendre();
-    msg(S.showMultiButtons ? 'Mode multi-utilisateurs déverrouillé.' : 'Choix des utilisateurs verrouillé.');
+    msg('Choix des utilisateurs verrouillé.');
   } else {
-    clickTimer = setTimeout(() => {
-      clickCount = 0;
-    }, 1500);
+    clickTimer = setTimeout(() => { clickCount = 0; }, 1500);
   }
 }
 
-// Gestion des 10 clics pour débloquer la zone de test dans l'onglet Options
+// 10 clics sur l'onglet Options pour débloquer/bloquer la zone de test
 let testClickCount = 0;
 let testClickTimer = null;
 
@@ -357,19 +369,23 @@ function rendre(){
   ROWS = {}; const t = today(); if (!M) M = t.slice(0,7);
   
   if (S.showMultiButtons){
-    $('seg').innerHTML = S.users.map(u => `<button class="user-btn ${u.id===U?'active':''}" onclick="setU('${u.id}')">${esc(u.nom)}</button>`).join('');
+    $('seg').innerHTML = S.users.map(u => `<button class="user-btn ${u.id===U?'active':''}" onclick="handleUserClick('${u.id}')">${esc(u.nom)}</button>`).join('');
   } else {
-    const activeUser = usr(U);
-    $('seg').innerHTML = `<button class="user-btn active" onclick="handleUserClick()" title="Appuyez 10 fois">${esc(activeUser.nom)}</button>`;
+    const activeUser = usr(U) || S.users[0];
+    $('seg').innerHTML = `<button class="user-btn active" onclick="handleUserClick('${activeUser ? activeUser.id : 'a'}')" title="Appuyez 10 fois pour déverrouiller">${esc(activeUser ? activeUser.nom : 'Utilisateur')}</button>`;
   }
   
   for (const v of ['synth','detail','options']){
     $('tab-'+v).classList.toggle('hidden', v !== T);$('nav-'+v).classList.toggle('active', v === T);
   }
   synthese(t); detail();
-  $('p-n').value = usr(U).nom;
-  $('p-i').value = usr(U).init;
-  $('p-def').value = S.defaut \vert{}\vert{} 'a';$('zone-test-card').style.display = showTestZone ? 'block' : 'none';
+  
+  const activeUser = usr(U);
+  if (activeUser){
+    $('p-n').value = activeUser.nom;
+    $('p-i').value = activeUser.init;
+  }
+  $('zone-test-card').style.display = showTestZone ? 'block' : 'none';
 }
 
 function synthese(t){
@@ -412,9 +428,9 @@ function majFin(){ $('f-finbox').classList.toggle('hidden', !$('f-r').checked); 
 
 function saveParams(){
   const u = usr(U);
+  if(!u) return;
   u.nom = $('p-n').value.trim() || u.nom;
   u.init = parseFloat($('p-i').value.replace(',', '.').replace('−', '-')) || 0;
-  S.defaut = $('p-def').value;
   sauver();
   rendre();
   msg('Paramètres enregistrés.');
@@ -498,8 +514,7 @@ function importerJSON(txt){
   let d; try { d = JSON.parse(txt); } catch(e) { return msg('JSON illisible.'); }
   if (Array.isArray(d.users) && Array.isArray(d.ops) && Array.isArray(d.regles)){
     S = d;
-    if (!S.defaut) S.defaut = 'a';
-    U = S.defaut;
+    U = S.users[0] ? S.users[0].id : 'a';
     sauver();
     rendre();
     return msg('Sauvegarde JSON restaurée et synchronisée avec succès !');
@@ -558,7 +573,7 @@ let armee = false;
 function raz(){
   const b = $('raz');
   if (!armee){ armee = true; b.textContent = 'Confirmer : tout effacer'; msg('Appuie une 2e fois pour confirmer (5 s).'); setTimeout(() => { armee = false; b.textContent = 'Remise à zéro complète'; }, 5000); return; }
-  armee = false; b.textContent = 'Remise à zéro complète'; S = vide(); U = S.defaut; sauver(); rendre(); msg('Remise à zéro effectuée.');
+  armee = false; b.textContent = 'Remise à zéro complète'; S = vide(); U = S.users[0].id; sauver(); rendre(); msg('Remise à zéro effectuée.');
 }
 
 $('filtres').innerHTML = [['deb','Débits'],['cre','Crédits'],['men','Récurrentes'],['pon','Ponctuelles'],['com','Charges communes',1],['roll','Afficher le solde glissant',1],['eq','Afficher l’équilibre des charges',1]]
