@@ -186,13 +186,18 @@ async function chargerCloud(){
       if (data && data.length > 0 && data[0].payload && Object.keys(data[0].payload).length > 0){
         S = data[0].payload;
         if (!S.defaut) S.defaut = 'a';
-        U = S.defaut;
+        
+        const localUser = localStorage.getItem('mon_budget_user');
+        U = (localUser && S.users.some(u => u.id === localUser)) ? localUser : S.defaut;
+        
         rendre();
         msg('Données synchronisées depuis Supabase.');
       }
     }
   } catch(e){ console.error('Erreur chargement cloud', e); }
-  U = S.defaut || 'a';
+  
+  const localUser = localStorage.getItem('mon_budget_user');
+  U = (localUser && S.users.some(u => u.id === localUser)) ? localUser : (S.defaut || 'a');
   rendre();
 }
 
@@ -295,7 +300,7 @@ function ligne(x, s){
   </div>`;
 }
 
-// Gestion des 10 clics pour afficher les 2 boutons d'utilisateurs
+// Gestion des 7 clics pour verrouiller / déverrouiller le choix des utilisateurs
 let clickCount = 0;
 let clickTimer = null;
 
@@ -303,11 +308,11 @@ function handleUserClick(){
   clickCount++;
   clearTimeout(clickTimer);
   
-  if (clickCount >= 10){
+  if (clickCount >= 7){
     clickCount = 0;
-    S.showMultiButtons = true;
+    S.showMultiButtons = !S.showMultiButtons;
     rendre();
-    msg('Mode multi-utilisateurs affiché.');
+    msg(S.showMultiButtons ? 'Mode multi-utilisateurs déverrouillé.' : 'Choix des utilisateurs verrouillé.');
   } else {
     clickTimer = setTimeout(() => {
       clickCount = 0;
@@ -317,6 +322,7 @@ function handleUserClick(){
 
 function setU(id){
   U = id;
+  localStorage.setItem('mon_budget_user', id);
   rendre();
 }
 
@@ -327,7 +333,7 @@ function rendre(){
     $('seg').innerHTML = S.users.map(u => `<button class="user-btn ${u.id===U?'active':''}" onclick="setU('${u.id}')">${esc(u.nom)}</button>`).join('');
   } else {
     const activeUser = usr(U);
-    $('seg').innerHTML = `<button class="user-btn active" onclick="handleUserClick()" title="Appuyez 10 fois">${esc(activeUser.nom)}</button>`;
+    $('seg').innerHTML = `<button class="user-btn active" onclick="handleUserClick()" title="Appuyez 7 fois">${esc(activeUser.nom)}</button>`;
   }
   
   for (const v of ['synth','detail','options']){
@@ -531,7 +537,6 @@ function raz(){
 $('filtres').innerHTML = [['deb','Débits'],['cre','Crédits'],['men','Récurrentes'],['pon','Ponctuelles'],['com','Charges communes',1],['roll','Afficher le solde glissant',1],['eq','Afficher l’équilibre des charges',1]]
   .map(([k, n, w]) => `${k==='roll'?'<div style="grid-column:span 2;border-top:1px solid var(--border)"></div>':''}<label class="row" style="${w?'grid-column:span 2':''}"><input type="checkbox" ${F[k]?'checked':''} onchange="F['${k}']=this.checked;rendre()">${n}</label>`).join('');
 
-// Lancement au démarrage depuis le cloud
 chargerCloud();
 </script>
 </body>
