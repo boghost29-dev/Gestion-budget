@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Mes Comptes</title>
 
-<!-- Manifest WebApp directement intégré -->
-<link rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogIk1lcyBDb21wdGVzIiwKICAic2hvcnRfbmFtZSI6ICJDb21wdGVzIiwKICAic3RhcnRfdXJsIjogIi4vIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjMDkwZDE2IiwKICAidGhlbWVfY29sb3IiOiAiIzA5MGQxNiIsCiAgImljb25zIjogWwogICAgewogICAgICAic3JjIjogImRhdGE6aW1hZ2Uvc3ZnK3htbCw8c3ZnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zycgdmlld0JveD0nMCAwIDEwMCAxMDAnPjxyZWN0IHdpZHRoPScxMDAnIGhlaWdodD0nMTAwJyByeD0nMjInIGZpbGw9JyUwOTBkMTYnLz48cGF0aCBkPSdNNTAgMTUgTDE1IDQ1IEwyNSA0NSBMMjUgODIgTDc1IDgy LDc1IDQ1IEw4NSA0NSBaJyBmaWxsPSclMjNmZmZmZmYnLz48dGV4dCB4PSc1MCUnIHk9JzY3JScgZm9udC1zaXplPSczMicgZm9udC13ZWlnaHQ9JzkwMCcgZm9udC1mYW1pbHk9J3NhbnMtc2VyaWYnIHRleHQtYW5jaG9yPSdtaWRkbGUnIGZpbGw9JyUwOTBkMTYnPsK1PC90ZXh0Pjwvc3ZnPiIsCiAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInR5cGUiOiAiaW1hZ2Uvc3ZnK3htbCIsCiAgICAgICJwdXJwb3NlIjogImFueSBtYXNrYWJsZSIKICAgIH0KICBdCn0=">
+<!-- Manifest WebApp directement intégré pour l'installation mobile -->
+<link rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogIk1lcyBDb21wdGVzIiwKICAic2hvcnRfbmFtZSI6ICJDb21wdGVzIiwKICAic3RhcnRfdXJsIjogIi4vIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjMDkwZDE2IiwKICAidGhlbWVfY29sb3IiOiAiIzA5MGQxNiIsCiAgImljb25zIjogWwogICAgewogICAgICAic3JjIjogImRhdGE6aW1hZ2Uvc3ZnK3htbCw8c3ZnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zycgdmlld0JveD0nMCAwIDEwMCAxMDAnPjxyZWN0IHdpZHRoPScxMDAnIGhlaWdodD0nMTAwJyByeD0nMjInIGZpbGw9JyUwOTBkMTYnLz48cGF0aCBkPSdNNTAgMTUgTDE1IDQ1IEwyNSA0NSBMMjUgODIgTDc1IDgy LDc1IDQ1IEw4NSA0NSBaJyBmaWxsPSclMjNmZmZmZmYnLz48dGV4dCB4PSc1MCUnIHk9JzY3JScgZm9udC1zaXplPSczMicgZm9udC13ZWlnaHQ9JzkwMCcgZm9udC1mYW1pbHk9J3NhbnMtc2VyaWYnIHRleHQtYW5jaG9yPSdtaWRkbGUnIGZpbGw9JyUwOTBkMTYnPsK1PC90ZXh0Pjwvc3ZnPiIsCiAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInR5cGUiOiAiaW1hZ2Uvc3ZnK3htbCIsCiAgICAgICJwdXJwb3NlIjogImFueSBtYXJrYWJsZSIKICAgIH0KICBdCn0=">
 
 <!-- Icône SVG pour Favoris, Onglets et Écran d'accueil -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23090d16'/><path d='M50 15 L15 45 L25 45 L25 82 L75 82 L75 45 L85 45 Z' fill='%23ffffff'/><text x='50%' y='67%' font-size='32' font-weight='900' font-family='sans-serif' text-anchor='middle' fill='%23090d16'>€</text></svg>">
@@ -134,7 +134,7 @@ summary{font-weight:600;cursor:pointer;color:var(--text);font-size:.85rem;outlin
  <nav class="ios-nav">
   <button class="nav-item active" id="nav-synth" onclick="T='synth';rendre()"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7zm4-3h2v10h-2zm4 6h2v4h-2z"/></svg>Synthèse</button>
   <button class="nav-item" id="nav-detail" onclick="T='detail';rendre()"><svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z"/></svg>Détail</button>
-  <button class="nav-item" id="nav-options" onclick="gererClicOptions()"><svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c-.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c-.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6-3.6z"/></svg>Options</button>
+  <button class="nav-item" id="nav-options" onclick="gererClicOptions()"><svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c-.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6-3.6z"/></svg>Options</button>
  </nav>
 </div>
 
@@ -204,7 +204,7 @@ function detecterUserUrl() {
 }
 
 async function chargerCloud(){
-  detecterUserUrl(); // Vérifie l'URL en premier
+  detecterUserUrl();
   
   try {
     const res = await fetch(`${SB_URL}/rest/v1/app_data?id=eq.1`, {
@@ -447,10 +447,42 @@ function detail(){
   $('detailEq').classList.toggle('hidden', !F.eq);$('detailEqText').textContent = commun(M).txt;
   const vis = lignes.filter(ok).reverse();
   $('d-list').innerHTML = vis.map(o => ligne(o.x, F.roll ? o.s : undefined)).join('') || '<p class="mu" style="text-align:center;padding:10px">Aucune opération correspondante</p>';
+  
+  // Affichage des références fixes avec le bouton 🔄 de resynchronisation M+1/M+2
   $('regles').innerHTML = S.regles.map((g, i) => g.u !== U ? '' : `<div class="op-item" onclick="ouvrirTpl(${i})">
-    <div class="op-info"><div class="op-label">${esc(g.l)} ${g.c?'🤝':''}</div><div class="op-sub">le ${g.jour} · ${g.fin ? 'Fin : '+fd(g.fin) : 'sans fin'}</div>
-    ${Object.keys(g.exc||{}).filter(k => g.exc[k].skip).map(k => `<div class="op-sub">retiré : ${k.slice(5)}/${k.slice(0,4)} <u onclick="event.stopPropagation();delete S.regles[${i}].exc['${k}'];sauver();rendre()">annuler</u></div>`).join('')}</div>
-    <div class="op-right"><div class="op-amount ${g.m<0?'red':'green'}">${g.m>0?'+':''}${eur(g.m)}</div><button class="del-btn" onclick="event.stopPropagation();S.regles.splice(${i},1);sauver();rendre()">✕</button></div></div>`).join('') || '<p class="mu" style="text-align:center">Aucune référence fixe.</p>';
+    <div class="op-info">
+      <div class="op-label">${esc(g.l)} ${g.c?'🤝':''}</div>
+      <div class="op-sub">le ${g.jour} · ${g.fin ? 'Fin : '+fd(g.fin) : 'sans fin'}</div>
+      ${Object.keys(g.exc||{}).filter(k => g.exc[k].skip).map(k => `<div class="op-sub">retiré : ${k.slice(5)}/${k.slice(0,4)} <u onclick="event.stopPropagation();delete S.regles[${i}].exc['${k}'];sauver();rendre()">annuler</u></div>`).join('')}
+    </div>
+    <div class="op-right">
+      <div class="op-amount ${g.m<0?'red':'green'}">${g.m>0?'+':''}${eur(g.m)}</div>
+      <button class="del-btn" style="background:rgba(99,102,241,0.2);color:#818cf8;margin-right:4px;" title="Réinitialiser et synchroniser sur M+1 et M+2" onclick="event.stopPropagation();refreshSingleTemplate(${i})">🔄</button>
+      <button class="del-btn" onclick="event.stopPropagation();S.regles.splice(${i},1);sauver();rendre()">✕</button>
+    </div>
+  </div>`).join('') || '<p class="mu" style="text-align:center">Aucune référence fixe.</p>';
+}
+
+function refreshSingleTemplate(i) {
+  const g = S.regles[i];
+  if (!g) return;
+
+  const n = new Date();
+  let countUpdated = 0;
+
+  for (let mOffset = 1; mOffset <= 2; mOffset++) {
+    const targetDate = new Date(n.getFullYear(), n.getMonth() + mOffset, 1);
+    const ym = iso(targetDate).slice(0, 7);
+
+    if (g.exc && g.exc[ym]) {
+      delete g.exc[ym];
+      countUpdated++;
+    }
+  }
+
+  sauver();
+  rendre();
+  msg(`Synchronisation de "${g.l}" effectuée pour M+1 et M+2 !`);
 }
 
 function decaler(n){
@@ -476,9 +508,18 @@ function saveParams(){
 function ouvrir(id){
   ED = id || ''; const x = ED ? ROWS[ED] : null, men = ED[0] === 'r';
   $('m-t').textContent = x ? 'Modifier l’opération' : 'Nouvelle opération';
-  $('f-l').value = x ? x.l : ''; $('f-m').value = x ? Math.abs(x.m) : ''; $('f-t').value = x && x.m > 0 ? '1' : '-1';
-  $('f-c').value = x && x.c ? '1' : '0'; $('f-d').value = x ? x.d : today(); $('f-r').checked = false; $('f-f').value = men ? (x.g.fin || '') : '';
-  ['f-l','f-t','f-c'].forEach(i => $(i).disabled = men);$('f-rbox').classList.toggle('hidden', !!ED); $('f-finbox').classList.toggle('hidden', !men);$('f-note').textContent = men ? 'Mensuel : le montant et la date ne changent que ce mois-ci.' : '';
+  $('f-l').value = x ? x.l : ''; 
+  $('f-m').value = x ? Math.abs(x.m) : ''; 
+  $('f-t').value = x && x.m > 0 ? '1' : '-1';$('f-c').value = x && x.c ? '1' : '0'; 
+  $('f-d').value = x ? x.d : today(); 
+  $('f-r').checked = false; 
+  $('f-f').value = men ? (x.g.fin || '') : '';
+  
+  // Type et Répartition restent verrouillés pour les règles mensuelles, mais le Libellé et le Montant restent modifiables !
+  ['f-t','f-c'].forEach(i => $(i).disabled = men);$('f-l').disabled = false;
+  
+  $('f-rbox').classList.toggle('hidden', !!ED); 
+  $('f-finbox').classList.toggle('hidden', !men);$('f-note').textContent = men ? 'Règle mensuelle : l’ajustement de montant ne s’appliquera qu’à ce mois-ci.' : '';
   ouvrirM('m-op');
 }
 
