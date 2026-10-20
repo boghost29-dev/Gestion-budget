@@ -60,9 +60,6 @@ nav.ios-nav{position:absolute;bottom:0;left:0;width:100%;background:rgba(15,23,4
 .fm{display:flex;flex-direction:column;gap:12px;margin-top:10px}
 label{font-size:.78rem;color:var(--text-muted);display:flex;flex-direction:column;gap:4px;font-weight:500}
 label.row{flex-direction:row;align-items:center;gap:8px;color:var(--text)}
-.input-with-btn{display:flex;align-items:center;gap:6px}
-.input-with-btn input{flex:1}
-.btn-clear-date{background:rgba(239,68,68,0.2);color:#f87171;border:1px solid rgba(239,68,68,0.4);width:38px;height:38px;border-radius:10px;font-size:.85rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 input,select,textarea{background:rgba(15,23,42,.9);border:1px solid var(--border);border-radius:12px;padding:11px;color:var(--text);font-size:.92rem;width:100%;outline:none}
 input[type=checkbox]{width:16px;height:16px}
 details{background:rgba(15,23,42,.2);border:1px solid var(--border);border-radius:12px;padding:10px 14px;margin-bottom:8px}
@@ -150,13 +147,7 @@ summary{font-weight:600;cursor:pointer;color:var(--text);font-size:.85rem;outlin
   <label>Type<select id="f-t"><option value="-1">Débit (Dépense)</option><option value="1">Crédit (Rentrée)</option></select></label>
   <label>Répartition / Charges communes<select id="f-c"><option value="0">Opération personnelle</option><option value="1">Charge commune (Partagé 50/50)</option></select></label>
   <label>Date<input type="date" id="f-d"></label>
-  <label class="row" id="f-rbox"><input type="checkbox" id="f-r" onchange="majFin()">Se répète chaque mois</label>
-  <label id="f-finbox" class="hidden">Date de fin de récurrence (optionnel)
-    <div class="input-with-btn">
-      <input type="date" id="f-f">
-      <button type="button" class="btn-clear-date" onclick="$('f-f').value=''" title="Rendre sans fin">❌</button>
-    </div>
-  </label>
+  <label class="row" id="f-rbox"><input type="checkbox" id="f-r">Se répète chaque mois</label>
   <p class="mu" id="f-note"></p>
   <button class="btn-primary" onclick="enregistrer()">Enregistrer</button></div>
 </div></div>
@@ -459,7 +450,7 @@ function detail(){
   $('regles').innerHTML = S.regles.map((g, i) => g.u !== U ? '' : `<div class="op-item" onclick="ouvrirTpl(${i})">
     <div class="op-info">
       <div class="op-label">${esc(g.l)} ${g.c?'🤝':''}</div>
-      <div class="op-sub">Chaque mois le ${g.jour}${g.fin ? ' · Fin : '+fd(g.fin) : ''}</div>
+      <div class="op-sub">Chaque mois le ${g.jour}</div>
       ${Object.keys(g.exc||{}).filter(k => g.exc[k].skip).map(k => `<div class="op-sub">retiré : ${k.slice(5)}/${k.slice(0,4)} <u onclick="event.stopPropagation();delete S.regles[${i}].exc['${k}'];sauver();rendre()">annuler</u></div>`).join('')}
     </div>
     <div class="op-right">
@@ -500,7 +491,6 @@ function decaler(n){
 
 const fermer = id => $(id).classList.add('hidden');
 const ouvrirM = id => $(id).classList.remove('hidden');
-function majFin(){ $('f-finbox').classList.toggle('hidden', !$('f-r').checked); }
 
 function saveParams(){
   const u = usr(U);
@@ -520,25 +510,22 @@ function ouvrir(id){
   $('f-t').value = x && x.m > 0 ? '1' : '-1';$('f-c').value = x && x.c ? '1' : '0'; 
   $('f-d').value = x ? x.d : today(); 
   $('f-r').checked = false; 
-  $('f-f').value = men ? (x.g.fin || '') : '';
   
   ['f-t','f-c'].forEach(i => $(i).disabled = men);$('f-l').disabled = false;
   
-  $('f-rbox').classList.toggle('hidden', !!ED); 
-  $('f-finbox').classList.toggle('hidden', !men);$('f-note').textContent = men ? 'Règle mensuelle : l’ajustement de montant ne s’appliquera qu’à ce mois-ci.' : '';
+  $('f-rbox').classList.toggle('hidden', !!ED);$('f-note').textContent = men ? 'Règle mensuelle : l’ajustement de montant ne s’appliquera qu’à ce mois-ci.' : '';
   ouvrirM('m-op');
 }
 
 function enregistrer(){
-  const l = $('f-l').value.trim(), v = Math.abs(parseFloat($('f-m').value)), d = $('f-d').value, sg = +$('f-t').value, c = $('f-c').value === '1', fin =$('f-f').value;
+  const l = $('f-l').value.trim(), v = Math.abs(parseFloat($('f-m').value)), d =$('f-d').value, sg = +$('f-t').value, c =$('f-c').value === '1';
   if (!l || isNaN(v) || !d) return msg('Libellé, montant et date sont requis.');
   if (ED[0] === 'r'){
     const [r, k] = ED.slice(1).split('|'), g = S.regles[+r];
-    g.exc = g.exc || {}; g.exc[k] = {m:(g.m < 0 ? -1 : 1) * v, d}; g.fin = fin;
+    g.exc = g.exc || {}; g.exc[k] = {m:(g.m < 0 ? -1 : 1) * v, d};
   } else if (ED[0] === 'o') Object.assign(S.ops[+ED.slice(1)], {l, m:sg*v, d, c});
   else if ($('f-r').checked){
-    if (fin && fin < d) return msg('La date de fin est avant le début.');
-    S.regles.push({u:U, l, m:sg*v, c, jour:+d.slice(8), debut:d, fin});
+    S.regles.push({u:U, l, m:sg*v, c, jour:+d.slice(8), debut:d});
   } else S.ops.push({u:U, l, m:sg*v, d, c});
   sauver(); fermer('m-op'); rendre();
 }
@@ -627,7 +614,7 @@ function parseCSV(t){
   const L = []; let c = [], f = '', q = false;
   for (let i = 0; i < t.length; i++){
     const x = t[i];
-    if (q){ if (x === '"'){ if (t[i+1] === '"'){ f += '"'; i++; } else q = false; } else f += x; }
+    if (q){ if (x === '"'){ if (t[i+1] === '"'){ f += '"'; i++; } else q = false; } else q = false; }
     else if (x === '"') q = true;
     else if (x === ',') { c.push(f); f = ''; }
     else if (x === '\n' || x === '\r'){ if (x === '\r' && t[i+1] === '\n') i++; c.push(f); L.push(c); c = []; f = ''; }
@@ -664,7 +651,6 @@ function importer(txt){
   for (const [k, g] of Object.entries(reg)){
     if (g.ref < deb) continue;
     g.debut = g.ref.slice(0,7) + '-01';
-    if (mx[k] < top.slice(0,7) + '-01') g.fin = mx[k];
     delete g.ref; S.regles.push(g); nr++;
   }
   sauver(); rendre(); msg(`${n} opérations et ${nr} références fixes importées.`);
