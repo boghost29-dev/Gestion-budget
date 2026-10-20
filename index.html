@@ -24,6 +24,27 @@
 *{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;-webkit-tap-highlight-color:transparent}
 html,body{background:var(--bg);color:var(--text);width:100%;height:100%;overflow:hidden}
 .app-frame{width:100%;max-width:430px;height:100%;margin:0 auto;background:rgba(9,13,22,.95);display:flex;flex-direction:column;position:relative}
+
+/* Bandeau statut réseau hors ligne */
+#net-status {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: #f59e0b;
+  color: #000;
+  text-align: center;
+  padding: 6px 12px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  z-index: 1000;
+  transition: transform 0.3s ease;
+  transform: translateY(-100%);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+#net-status.show { transform: translateY(0); }
+#net-status.online { background: #10b981; color: #fff; }
+
 header{padding:14px 20px;display:flex;justify-content:space-between;align-items:center;background:rgba(9,13,22,.9);border-bottom:1px solid var(--border);flex-shrink:0}
 .app-title{font-size:1.15rem;font-weight:800;background:linear-gradient(to right,#fff,#94a3b8);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .user-selector{display:flex;background:rgba(15,23,42,.9);padding:3px;border-radius:12px;border:1px solid var(--border)}
@@ -70,6 +91,7 @@ summary{font-weight:600;cursor:pointer;color:var(--text);font-size:.85rem;outlin
 </head>
 <body>
 <div class="app-frame">
+ <div id="net-status">⚠️ Mode hors ligne - Vos données sont sauvegardées localement</div>
  <header>
   <div class="app-title">Mes Comptes</div>
   <div class="user-selector" id="seg"></div>
@@ -184,6 +206,42 @@ let S = vide(), U = 'a', T = 'synth', M = '', ED = '', ET = -1, RM = '', ROWS = 
 const F = {deb:1, cre:1, men:1, pon:1, com:1, roll:1, eq:0};
 let showTestZone = false;
 
+const $ = id => document.getElementById(id);
+const p2 = n => String(n).padStart(2,'0');
+const iso = d => d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate());
+const today = () => iso(new Date());
+const eur = n => n.toLocaleString('fr-FR',{style:'currency',currency:'EUR'});
+const esc = s => String(s).replace(/[&<>"]/g, c => '&#'+c.charCodeAt(0)+';');
+const fd = d => d.slice(8)+'/'+d.slice(5,7)+'/'+d.slice(0,4);
+const usr = id => S.users.find(u => u.id === id);
+const somme = l => l.reduce((a, x) => a + x.m, 0);
+
+function msg(t){
+  const e = $('toast');
+  e.textContent = t;
+  e.style.display = 'block';
+  clearTimeout(msg.h);
+  msg.h = setTimeout(() => e.style.display = 'none', 4500);
+}
+
+// --- GESTION ET AFFICHAGE DU STATUT RÉSEAU HORS LIGNE ---
+function majStatutReseau() {
+  const el = $('net-status');
+  if (!navigator.onLine) {
+    el.textContent = '⚠️ Mode hors ligne - Vos modifications sont enregistrées localement';
+    el.className = 'show';
+  } else {
+    el.textContent = '⚡ Connexion rétablie - Synchronisation en cours...';
+    el.className = 'show online';
+    sauver().then(() => {
+      setTimeout(() => { el.className = ''; }, 2500);
+    });
+  }
+}
+
+window.addEventListener('online', majStatutReseau);
+window.addEventListener('offline', majStatutReseau);
+
 // Détecter l'utilisateur via l'URL (ex: ?user=prescillia ou ?u=b)
 function detecterUserUrl() {
   const params = new URLSearchParams(window.location.search);
@@ -204,26 +262,37 @@ function detecterUserUrl() {
 async function chargerCloud(){
   detecterUserUrl();
   
-  try {
-    const res = await fetch(`${SB_URL}/rest/v1/app_data?id=eq.1`, {
-      headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
-    });
-    if (res.ok){
-      const data = await res.json();
-      if (data && data.length > 0 && data[0].payload && Object.keys(data[0].payload).length > 0){
-        S = data[0].payload;
-        
-        const params = new URLSearchParams(window.location.search);
-        if (!params.get('user') && !params.get('u')) {
-          const localUser = localStorage.getItem('mon_budget_user');
-          U = (localUser && S.users.some(u => u.id === localUser)) ? localUser : (S.users[0] ? S.users[0].id : 'a');
+  // Lecture du secours local si disponible (Hors ligne)
+  const localBackup = localStorage.getItem('mon_budget_local_data');
+  if (localBackup) {
+    try { S = JSON.parse(localBackup); } catch(e){}
+  }
+  
+  if (navigator.onLine) {
+    try {
+      const res = await fetch(`${SB_URL}/rest/v1/app_data?id=eq.1`, {
+        headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
+      });
+      if (res.ok){
+        const data = await res.json();
+        if (data && data.length > 0 && data[0].payload && Object.keys(data[0].payload).length > 0){
+          S = data[0].payload;
+          localStorage.setItem('mon_budget_local_data', JSON.stringify(S));
+          
+          const params = new URLSearchParams(window.location.search);
+          if (!params.get('user') && !params.get('u')) {
+            const localUser = localStorage.getItem('mon_budget_user');
+            U = (localUser && S.users.some(u => u.id === localUser)) ? localUser : (S.users[0] ? S.users[0].id : 'a');
+          }
+          
+          rendre();
+          msg('Données synchronisées depuis Supabase.');
         }
-        
-        rendre();
-        msg('Données synchronisées depuis Supabase.');
       }
-    }
-  } catch(e){ console.error('Erreur chargement cloud', e); }
+    } catch(e){ console.error('Erreur chargement cloud', e); }
+  } else {
+    majStatutReseau();
+  }
   
   const params = new URLSearchParams(window.location.search);
   if (!params.get('user') && !params.get('u')) {
@@ -234,36 +303,24 @@ async function chargerCloud(){
 }
 
 async function sauver(){
-  try {
-    await fetch(`${SB_URL}/rest/v1/app_data?id=eq.1`, {
-      method: 'PATCH',
-      headers: {
-        'apikey': SB_KEY,
-        'Authorization': `Bearer ${SB_KEY}`,
-        'Content-Type': 'application/json',
-        'Prefer': 'return=minimal'
-      },
-      body: JSON.stringify({ payload: S })
-    });
-  } catch(e){ console.error('Erreur sauvegarde cloud', e); msg('Erreur de sauvegarde cloud.'); }
-}
+  // 1. Sauvegarde locale immédiate (Sécurité hors ligne)
+  localStorage.setItem('mon_budget_local_data', JSON.stringify(S));
 
-const $ = id => document.getElementById(id);
-const p2 = n => String(n).padStart(2,'0');
-const iso = d => d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate());
-const today = () => iso(new Date());
-const eur = n => n.toLocaleString('fr-FR',{style:'currency',currency:'EUR'});
-const esc = s => String(s).replace(/[&<>"]/g, c => '&#'+c.charCodeAt(0)+';');
-const fd = d => d.slice(8)+'/'+d.slice(5,7)+'/'+d.slice(0,4);
-const usr = id => S.users.find(u => u.id === id);
-const somme = l => l.reduce((a, x) => a + x.m, 0);
-
-function msg(t){
-  const e = $('toast');
-  e.textContent = t;
-  e.style.display = 'block';
-  clearTimeout(msg.h);
-  msg.h = setTimeout(() => e.style.display = 'none', 4500);
+  // 2. Synchronisation Cloud Supabase si en ligne
+  if (navigator.onLine) {
+    try {
+      await fetch(`${SB_URL}/rest/v1/app_data?id=eq.1`, {
+        method: 'PATCH',
+        headers: {
+          'apikey': SB_KEY,
+          'Authorization': `Bearer ${SB_KEY}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({ payload: S })
+      });
+    } catch(e){ console.error('Erreur sauvegarde cloud', e); msg('Sauvegarde locale effectuée.'); }
+  }
 }
 
 function brut(uid, jusqua){
@@ -667,6 +724,28 @@ $('filtres').innerHTML = [['deb','Débits'],['cre','Crédits'],['men','Récurren
   .map(([k, n, w]) => `${k==='roll'?'<div style="grid-column:span 2;border-top:1px solid var(--border)"></div>':''}<label class="row" style="${w?'grid-column:span 2':''}"><input type="checkbox" ${F[k]?'checked':''} onchange="F['${k}']=this.checked;rendre()">${n}</label>`).join('');
 
 chargerCloud();
+
+// Enregistrement dynamique du Service Worker pour l'accès hors ligne PWA
+if ('serviceWorker' in navigator) {
+  const swCode = `
+    const CACHE_NAME = 'comptes-v1';
+    self.addEventListener('install', e => {
+      e.waitUntil(
+        caches.open(CACHE_NAME).then(cache => cache.addAll(['./']))
+      );
+      self.skipWaiting();
+    });
+    self.addEventListener('fetch', e => {
+      if (e.request.method !== 'GET') return;
+      e.respondWith(
+        fetch(e.request).catch(() => caches.match(e.request))
+      );
+    });
+  `;
+  const blob = new Blob([swCode], { type: 'application/javascript' });
+  const swUrl = URL.createObjectURL(blob);
+  navigator.serviceWorker.register(swUrl).catch(err => console.log('SW reg error:', err));
+}
 </script>
 </body>
 </html>
