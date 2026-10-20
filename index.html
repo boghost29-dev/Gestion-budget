@@ -60,6 +60,9 @@ nav.ios-nav{position:absolute;bottom:0;left:0;width:100%;background:rgba(15,23,4
 .fm{display:flex;flex-direction:column;gap:12px;margin-top:10px}
 label{font-size:.78rem;color:var(--text-muted);display:flex;flex-direction:column;gap:4px;font-weight:500}
 label.row{flex-direction:row;align-items:center;gap:8px;color:var(--text)}
+.input-with-btn{display:flex;align-items:center;gap:6px}
+.input-with-btn input{flex:1}
+.btn-clear-date{background:rgba(239,68,68,0.2);color:#f87171;border:1px solid rgba(239,68,68,0.4);width:38px;height:38px;border-radius:10px;font-size:.85rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 input,select,textarea{background:rgba(15,23,42,.9);border:1px solid var(--border);border-radius:12px;padding:11px;color:var(--text);font-size:.92rem;width:100%;outline:none}
 input[type=checkbox]{width:16px;height:16px}
 details{background:rgba(15,23,42,.2);border:1px solid var(--border);border-radius:12px;padding:10px 14px;margin-bottom:8px}
@@ -148,7 +151,12 @@ summary{font-weight:600;cursor:pointer;color:var(--text);font-size:.85rem;outlin
   <label>Répartition / Charges communes<select id="f-c"><option value="0">Opération personnelle</option><option value="1">Charge commune (Partagé 50/50)</option></select></label>
   <label>Date<input type="date" id="f-d"></label>
   <label class="row" id="f-rbox"><input type="checkbox" id="f-r" onchange="majFin()">Se répète chaque mois</label>
-  <label id="f-finbox" class="hidden">Date de fin de récurrence (optionnel)<input type="date" id="f-f"></label>
+  <label id="f-finbox" class="hidden">Date de fin de récurrence (optionnel)
+    <div class="input-with-btn">
+      <input type="date" id="f-f">
+      <button type="button" class="btn-clear-date" onclick="$('f-f').value=''" title="Effacer la date de fin">❌</button>
+    </div>
+  </label>
   <p class="mu" id="f-note"></p>
   <button class="btn-primary" onclick="enregistrer()">Enregistrer</button></div>
 </div></div>
@@ -162,7 +170,12 @@ summary{font-weight:600;cursor:pointer;color:var(--text);font-size:.85rem;outlin
   <label>Type<select id="t-t2"><option value="-1">Débit (Dépense récurrente)</option><option value="1">Crédit (Revenu récurrent)</option></select></label>
   <label>Répartition<select id="t-c"><option value="0">Personnel</option><option value="1">Charge commune (50/50)</option></select></label>
   <label>Jour du mois (1 à 31)<input type="number" id="t-j" min="1" max="31"></label>
-  <label>Date de fin de récurrence (optionnel)<input type="date" id="t-f"></label>
+  <label>Date de fin de récurrence (optionnel)
+    <div class="input-with-btn">
+      <input type="date" id="t-f">
+      <button type="button" class="btn-clear-date" onclick="$('t-f').value=''" title="Effacer la date de fin">❌</button>
+    </div>
+  </label>
   <p class="mu">Les changements valent pour toutes les échéances de cette référence.</p>
   <button class="btn-primary" onclick="enregistrerTpl()">Sauvegarder le modèle</button></div>
 </div></div>
@@ -457,7 +470,7 @@ function detail(){
     </div>
     <div class="op-right">
       <div class="op-amount ${g.m<0?'red':'green'}">${g.m>0?'+':''}${eur(g.m)}</div>
-      <button class="del-btn" style="background:rgba(99,102,241,0.2);color:#818cf8;margin-right:4px;" title="Réinitialiser et synchroniser sur M+1 et M+2" onclick="event.stopPropagation();refreshSingleTemplate(${i})">🔄</button>
+      <button class="del-btn" style="background:rgba(99,102,241,0.25);color:#818cf8;margin-right:4px;" title="Réinitialiser et synchroniser sur M+1 et M+2" onclick="event.stopPropagation();refreshSingleTemplate(${i})">🔄</button>
       <button class="del-btn" onclick="event.stopPropagation();S.regles.splice(${i},1);sauver();rendre()">✕</button>
     </div>
   </div>`).join('') || '<p class="mu" style="text-align:center">Aucune référence fixe.</p>';
@@ -515,7 +528,6 @@ function ouvrir(id){
   $('f-r').checked = false; 
   $('f-f').value = men ? (x.g.fin || '') : '';
   
-  // Type et Répartition restent verrouillés pour les règles mensuelles, mais le Libellé et le Montant restent modifiables !
   ['f-t','f-c'].forEach(i => $(i).disabled = men);$('f-l').disabled = false;
   
   $('f-rbox').classList.toggle('hidden', !!ED); 
