@@ -154,14 +154,14 @@ summary{font-weight:600;cursor:pointer;color:var(--text);font-size:.85rem;outlin
   <label id="f-finbox" class="hidden">Date de fin de récurrence (optionnel)
     <div class="input-with-btn">
       <input type="date" id="f-f">
-      <button type="button" class="btn-clear-date" onclick="$('f-f').value=''" title="Effacer la date de fin">❌</button>
+      <button type="button" class="btn-clear-date" onclick="$('f-f').value=''" title="Rendre sans fin">❌</button>
     </div>
   </label>
   <p class="mu" id="f-note"></p>
   <button class="btn-primary" onclick="enregistrer()">Enregistrer</button></div>
 </div></div>
 
-<!-- MODAL RÉFÉRENCE FIXE -->
+<!-- MODAL RÉFÉRENCE FIXE (OPTIONS) -->
 <div id="m-tpl" class="modal hidden"><div class="modal-content">
  <div style="display:flex;justify-content:space-between;align-items:center"><h3 id="t-t" style="font-size:1.05rem">Référence fixe mensuelle</h3><button class="del-btn" onclick="fermer('m-tpl')">✕</button></div>
  <div class="fm">
@@ -169,13 +169,7 @@ summary{font-weight:600;cursor:pointer;color:var(--text);font-size:.85rem;outlin
   <label>Montant de référence (€)<input type="number" step="0.01" id="t-m"></label>
   <label>Type<select id="t-t2"><option value="-1">Débit (Dépense récurrente)</option><option value="1">Crédit (Revenu récurrent)</option></select></label>
   <label>Répartition<select id="t-c"><option value="0">Personnel</option><option value="1">Charge commune (50/50)</option></select></label>
-  <label>Jour du mois (1 à 31)<input type="number" id="t-j" min="1" max="31"></label>
-  <label>Date de fin de récurrence (optionnel)
-    <div class="input-with-btn">
-      <input type="date" id="t-f">
-      <button type="button" class="btn-clear-date" onclick="$('t-f').value=''" title="Effacer la date de fin">❌</button>
-    </div>
-  </label>
+  <label>Date / Jour du mois (choisir une date)<input type="date" id="t-j"></label>
   <p class="mu">Les changements valent pour toutes les échéances de cette référence.</p>
   <button class="btn-primary" onclick="enregistrerTpl()">Sauvegarder le modèle</button></div>
 </div></div>
@@ -340,7 +334,7 @@ function ligne(x, s){
   const del = x.proj ? '' : `<button class="del-btn" onclick="event.stopPropagation();${i>=0?`supprimer(${i})`:`retirer('${id}')`}">✕</button>`;
   return `<div class="op-item ${x.d===t?'today-op':''}" style="${x.d>t?'opacity:.7':''}" onclick="${x.proj?`ouvrirReg('${x.k}')`:`ouvrir('${id}')`}">
    <div class="op-info">
-    <div class="op-label">${esc(x.l)} ${x.g?'🔄':''} ${x.c?'🤝':''} ${x.proj?'🔮':''}${x.d===t?' <span class="badge badge-warning" style="font-size:.6rem;padding:2px 5px">Aujourd’hui</span>':''}</div>
+    <div class="op-label">${esc(x.l)} ${x.g?'🔄':''} ${x.c?'🤝':''} ${x.proj?'👩‍❤️‍👨':''}${x.d===t?' <span class="badge badge-warning" style="font-size:.6rem;padding:2px 5px">Aujourd’hui</span>':''}</div>
     <div class="op-sub">${fd(x.d)}${s===undefined?'':' · solde '+eur(s)}</div>
    </div>
    <div class="op-right"><div class="op-amount ${x.m<0?'red':'green'}">${x.m>0?'+':''}${eur(x.m)}</div>${del}</div>
@@ -465,7 +459,7 @@ function detail(){
   $('regles').innerHTML = S.regles.map((g, i) => g.u !== U ? '' : `<div class="op-item" onclick="ouvrirTpl(${i})">
     <div class="op-info">
       <div class="op-label">${esc(g.l)} ${g.c?'🤝':''}</div>
-      <div class="op-sub">le ${g.jour} · ${g.fin ? 'Fin : '+fd(g.fin) : 'sans fin'}</div>
+      <div class="op-sub">Chaque mois le ${g.jour}${g.fin ? ' · Fin : '+fd(g.fin) : ''}</div>
       ${Object.keys(g.exc||{}).filter(k => g.exc[k].skip).map(k => `<div class="op-sub">retiré : ${k.slice(5)}/${k.slice(0,4)} <u onclick="event.stopPropagation();delete S.regles[${i}].exc['${k}'];sauver();rendre()">annuler</u></div>`).join('')}
     </div>
     <div class="op-right">
@@ -558,15 +552,32 @@ function retirer(id){
 function ouvrirTpl(i){
   ET = i; const g = i >= 0 ? S.regles[i] : null;
   $('t-t').textContent = g ? 'Modifier la référence fixe' : 'Référence fixe mensuelle';
-  $('t-l').value = g ? g.l : ''; $('t-m').value = g ? Math.abs(g.m) : ''; $('t-t2').value = g && g.m > 0 ? '1' : '-1';$('t-c').value = g && g.c ? '1' : '0'; $('t-j').value = g ? g.jour : 1; $('t-f').value = g ? (g.fin || '') : '';
+  $('t-l').value = g ? g.l : ''; 
+  $('t-m').value = g ? Math.abs(g.m) : ''; 
+  $('t-t2').value = g && g.m > 0 ? '1' : '-1';$('t-c').value = g && g.c ? '1' : '0'; 
+  
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = g ? String(g.jour).padStart(2, '0') : '01';
+  $('t-j').value = `${year}-${month}-${day}`;
+  
   ouvrirM('m-tpl');
 }
 
 function enregistrerTpl(){
-  const l = $('t-l').value.trim(), v = Math.abs(parseFloat($('t-m').value)), jour = +$('t-j').value, sg = +$('t-t2').value, c = $('t-c').value === '1', fin =$('t-f').value;
-  if (!l || isNaN(v) || !(jour >= 1 && jour <= 31)) return msg('Libellé, montant et jour (1 à 31) sont requis.');
-  if (ET >= 0) Object.assign(S.regles[ET], {l, m:sg*v, c, jour, fin});
-  else { const n = new Date(); S.regles.push({u:U, l, m:sg*v, c, jour, debut:iso(new Date(n.getFullYear(), n.getMonth(), 1)), fin}); }
+  const l = $('t-l').value.trim(), v = Math.abs(parseFloat($('t-m').value)), dateVal =$('t-j').value, sg = +$('t-t2').value, c =$('t-c').value === '1';
+  if (!l || isNaN(v) || !dateVal) return msg('Libellé, montant et date sont requis.');
+  
+  const jour = parseInt(dateVal.slice(8), 10);
+  
+  if (ET >= 0) {
+    Object.assign(S.regles[ET], {l, m:sg*v, c, jour});
+  } else {
+    const n = new Date(); 
+    S.regles.push({u:U, l, m:sg*v, c, jour, debut:iso(new Date(n.getFullYear(), n.getMonth(), 1))}); 
+  }
+  
   sauver(); fermer('m-tpl'); rendre();
 }
 
