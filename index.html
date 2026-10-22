@@ -223,6 +223,7 @@ const fd = d => d.slice(8)+'/'+d.slice(5,7)+'/'+d.slice(0,4);
 const usr = id => S.users.find(u => u.id === id);
 const somme = l => l.reduce((a, x) => a + x.m, 0);
 
+// Fonction sécurisée pour fabriquer une date sans dépassement (ex: éviter 31 nov -> 30 nov)
 const safeDateIso = (y, m, day) => {
   const nb = new Date(y, m + 1, 0).getDate();
   return iso(new Date(y, m, Math.min(day, nb)));
@@ -236,6 +237,7 @@ function msg(t){
   msg.h = setTimeout(() => e.style.display = 'none', 4500);
 }
 
+// --- GESTION ET AFFICHAGE DU STATUT RÉSEAU HORS LIGNE ---
 function majStatutReseau() {
   const el = $('net-status');
   if (!navigator.onLine) {
@@ -253,6 +255,7 @@ function majStatutReseau() {
 window.addEventListener('online', majStatutReseau);
 window.addEventListener('offline', majStatutReseau);
 
+// Détecter l'utilisateur via l'URL
 function detecterUserUrl() {
   const params = new URLSearchParams(window.location.search);
   const uParam = params.get('user') || params.get('u');
@@ -527,27 +530,19 @@ function detail(){
     </div>
     <div class="op-right">
       <div class="op-amount ${g.m<0?'red':'green'}">${g.m>0?'+':''}${eur(g.m)}</div>
-      <button class="del-btn" style="background:rgba(99,102,241,0.25);color:#818cf8;margin-right:4px;" title="Réinitialiser M+1 et M+2" onclick="event.stopPropagation();refreshSingleTemplate(${i})">🔄</button>
+      <button class="del-btn" style="background:rgba(99,102,241,0.25);color:#818cf8;margin-right:4px;" title="Réinitialiser et rétablir toutes les échéances" onclick="event.stopPropagation();refreshSingleTemplate(${i})">🔄</button>
       <button class="del-btn" onclick="event.stopPropagation();S.regles.splice(${i},1);sauver();rendre()">✕</button>
     </div>
   </div>`).join('') || '<p class="mu" style="text-align:center">Aucune référence fixe.</p>';
 }
 
-// Rafraîchissement ciblé sur M+1 et M+2 uniquement
 function refreshSingleTemplate(i) {
   const g = S.regles[i];
-  if (!g || !g.exc) return;
-
-  const now = new Date();
-  for (let mOffset = 1; mOffset <= 2; mOffset++) {
-    const targetDate = new Date(now.getFullYear(), now.getMonth() + mOffset, 1);
-    const ym = iso(targetDate).slice(0, 7);
-    delete g.exc[ym];
-  }
-
+  if (!g) return;
+  g.exc = {};
   sauver();
   rendre();
-  msg(`Réinitialisation effectuée pour "${g.l}" sur M+1 et M+2 !`);
+  msg(`Réinitialisation effectuée pour "${g.l}" ! Toutes les échéances sont rétablies.`);
 }
 
 function decaler(n){
@@ -704,6 +699,7 @@ function importerJSON(txt){
   msg('Format de fichier JSON non reconnu.');
 }
 
+/* CORRECTION DE PARSECSV : Le else f += x; a bien été restauré ici */
 function parseCSV(t){
   const L = []; let c = [], f = '', q = false;
   for (let i = 0; i < t.length; i++){
