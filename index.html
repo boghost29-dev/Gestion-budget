@@ -219,11 +219,10 @@ const iso = d => d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate());
 const today = () => iso(new Date());
 const eur = n => n.toLocaleString('fr-FR',{style:'currency',currency:'EUR'});
 const esc = s => String(s).replace(/[&<>"]/g, c => '&#'+c.charCodeAt(0)+';');
-const fd = d => d.slice(8)+'/'+d.slice(5,7)+'/'+d.slice(0,4);
+const fd = d => d.slice(8)+'-'+d.slice(5,7)+'-'+d.slice(0,4); // Affichage DD-MM-YYYY ou format FR lisible
 const usr = id => S.users.find(u => u.id === id);
 const somme = l => l.reduce((a, x) => a + x.m, 0);
 
-// Fonction sécurisée pour fabriquer une date sans dépassement (ex: éviter 31 nov -> 30 nov)
 const safeDateIso = (y, m, day) => {
   const nb = new Date(y, m + 1, 0).getDate();
   return iso(new Date(y, m, Math.min(day, nb)));
@@ -237,7 +236,6 @@ function msg(t){
   msg.h = setTimeout(() => e.style.display = 'none', 4500);
 }
 
-// --- GESTION ET AFFICHAGE DU STATUT RÉSEAU HORS LIGNE ---
 function majStatutReseau() {
   const el = $('net-status');
   if (!navigator.onLine) {
@@ -255,7 +253,6 @@ function majStatutReseau() {
 window.addEventListener('online', majStatutReseau);
 window.addEventListener('offline', majStatutReseau);
 
-// Détecter l'utilisateur via l'URL
 function detecterUserUrl() {
   const params = new URLSearchParams(window.location.search);
   const uParam = params.get('user') || params.get('u');
@@ -345,9 +342,11 @@ function brut(uid, jusqua){
       if (d < g.debut) continue;
       const k = d.slice(0,7), e = g.exc && g.exc[k];
       if (e && e.skip) continue;
-      const dd = e && e.d ? e.d : d, mm = e === undefined ? g.m : (typeof e === 'object' ? e.m : e);
-      const cc = (e && e.c !== undefined) ? e.c : g.c;
-      if (dd <= jusqua) r.push({u:uid, d:dd, l:g.l, m:mm, c:cc, g, k});
+      const dd = e && e.d ? e.d : d;
+      const mm = e && e.m !== undefined ? e.m : g.m;
+      const ll = e && e.l !== undefined ? e.l : g.l;
+      const cc = e && e.c !== undefined ? e.c : g.c;
+      if (dd <= jusqua) r.push({u:uid, d:dd, l:ll, m:mm, c:cc, g, k});
     }
   }
   return r;
@@ -522,7 +521,7 @@ function detail(){
         const ex = g.exc[k];
         if (ex.skip) {
           return `<div class="op-sub">retiré : ${k.slice(5)}/${k.slice(0,4)} <u onclick="event.stopPropagation();delete S.regles[${i}].exc['${k}'];sauver();rendre()">annuler</u></div>`;
-        } else if (ex && (ex.m !== undefined || ex.d !== undefined || ex.c !== undefined)) {
+        } else if (ex && (ex.m !== undefined || ex.d !== undefined || ex.c !== undefined || ex.l !== undefined)) {
           return `<div class="op-sub" style="color:var(--warning)">modifié : ${k.slice(5)}/${k.slice(0,4)} <u onclick="event.stopPropagation();delete S.regles[${i}].exc['${k}'];sauver();rendre()">annuler</u></div>`;
         }
         return '';
@@ -530,19 +529,27 @@ function detail(){
     </div>
     <div class="op-right">
       <div class="op-amount ${g.m<0?'red':'green'}">${g.m>0?'+':''}${eur(g.m)}</div>
-      <button class="del-btn" style="background:rgba(99,102,241,0.25);color:#818cf8;margin-right:4px;" title="Réinitialiser et rétablir toutes les échéances" onclick="event.stopPropagation();refreshSingleTemplate(${i})">🔄</button>
+      <button class="del-btn" style="background:rgba(99,102,241,0.25);color:#818cf8;margin-right:4px;" title="Réinitialiser M+1 et M+2" onclick="event.stopPropagation();refreshSingleTemplate(${i})">🔄</button>
       <button class="del-btn" onclick="event.stopPropagation();S.regles.splice(${i},1);sauver();rendre()">✕</button>
     </div>
   </div>`).join('') || '<p class="mu" style="text-align:center">Aucune référence fixe.</p>';
 }
 
+// Rafraîchissement non destructeur ciblant uniquement M+1 et M+2
 function refreshSingleTemplate(i) {
   const g = S.regles[i];
-  if (!g) return;
-  g.exc = {};
+  if (!g || !g.exc) return;
+
+  const now = new Date();
+  for (let mOffset = 1; mOffset <= 2; mOffset++) {
+    const targetDate = new Date(now.getFullYear(), now.getMonth() + mOffset, 1);
+    const ym = iso(targetDate).slice(0, 7);
+    delete g.exc[ym];
+  }
+
   sauver();
   rendre();
-  msg(`Réinitialisation effectuée pour "${g.l}" ! Toutes les échéances sont rétablies.`);
+  msg(`Réinitialisation effectuée pour "${g.l}" sur M+1 et M+2 uniquement.`);
 }
 
 function decaler(n){
@@ -579,7 +586,7 @@ function ouvrir(id){
   $('f-l').disabled = false;
   
   $('f-rbox').classList.toggle('hidden', !!ED);
-  $('f-note').textContent = men ? 'Règle mensuelle : l’ajustement (montant, date, répartition) s’appliquera exceptionnellement à ce mois-ci.' : '';
+  $('f-note').textContent = men ? 'Règle mensuelle : l’ajustement (libellé, montant, date, répartition) s’appliquera exceptionnellement à ce mois-ci.' : '';
   ouvrirM('m-op');
 }
 
@@ -595,6 +602,7 @@ function enregistrer(){
     
     g.exc = g.exc || {}; 
     g.exc[k] = { 
+      l: l,
       m: (g.m < 0 ? -1 : 1) * Math.abs(v), 
       d: d, 
       c: c 
@@ -633,10 +641,8 @@ function ouvrirTpl(i){
   $('t-f').value = g && g.fin ? g.fin : '';
   
   const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, '0');
-  const day = g ? String(g.jour).padStart(2, '0') : '01';
-  $('t-j').value = `${year}-${month}-${day}`;
+  const day = g ? g.jour : 1;
+  $('t-j').value = safeDateIso(now.getFullYear(), now.getMonth(), day);
   
   ouvrirM('m-tpl');
 }
@@ -670,10 +676,23 @@ function validerReg(){
   if (Math.abs(c.e) >= .005){
     const [du, cr] = c.e > 0 ? [1, 0] : [0, 1], a = Math.abs(c.e);
     S.ops.push({u:S.users[du].id, l:'Règlement charges communes ('+S.users[cr].nom+')', m:-a, d, c:false, reg:RM});
+    S.ops.push({u:S.users[cr].id, l:'Règlement charges communes ('+S.users[du].id === S.users[du].id ? S.users[cr].nom : ''+')', m:a, d, c:false, reg:RM}); // Fix template literal for user name below
+  }
+  sauver(); fermer('m-reg'); rendre(); msg('Règlement enregistré.');
+}
+
+// Correction rapide de l'affichage du nom dans validerReg
+function validerReg(){
+  const c = commun(RM), d = $('r-d').value; if (!d) return msg('Choisis une date.');
+  S.ops = S.ops.filter(o => o.reg !== RM);
+  if (Math.abs(c.e) >= .005){
+    const [du, cr] = c.e > 0 ? [1, 0] : [0, 1], a = Math.abs(c.e);
+    S.ops.push({u:S.users[du].id, l:'Règlement charges communes ('+S.users[cr].nom+')', m:-a, d, c:false, reg:RM});
     S.ops.push({u:S.users[cr].id, l:'Règlement charges communes ('+S.users[du].nom+')', m:a, d, c:false, reg:RM});
   }
   sauver(); fermer('m-reg'); rendre(); msg('Règlement enregistré.');
 }
+
 function annulerReg(){ S.ops = S.ops.filter(o => o.reg !== RM); sauver(); fermer('m-reg'); rendre(); msg('Règlement annulé.'); }
 
 function lireFichier(inp, fn){ const f = inp.files[0]; if (!f) return; const r = new FileReader(); r.onload = () => fn(r.result); r.readAsText(f); inp.value = ''; }
@@ -699,7 +718,6 @@ function importerJSON(txt){
   msg('Format de fichier JSON non reconnu.');
 }
 
-/* CORRECTION DE PARSECSV : Le else f += x; a bien été restauré ici */
 function parseCSV(t){
   const L = []; let c = [], f = '', q = false;
   for (let i = 0; i < t.length; i++){
@@ -729,7 +747,8 @@ function importer(txt){
     const m = sg * Math.abs(nombre(r[iM])), l = r[iL] || '', c = (iC >= 0 && r[iC] === 'Oui') || (iP >= 0 && r[iP] === 'Commune'), k0 = l+'|'+sg+'|'+(c ? 1 : 0);
     if (/^Règlement charges communes \(Projection/i.test(l)) continue;
     if (r[iR] === 'Mensuel' || r[iR] === 'Oui'){
-      if (d > (mx[k0] || '')) mx[k0] = d; if (d > top) top = d;
+      if (!mx[k0] || d > mx[k0]) mx[k0] = d;
+      if (d > top) top = d;
       const g = reg[k0];
       if (!g || (d >= deb ? (g.ref < deb || d < g.ref) : (g.ref < deb && d > g.ref))) reg[k0] = {u:U, l, m, c, jour:+dd[0], debut:deb, ref:d};
       if (d >= deb) continue;
@@ -741,6 +760,10 @@ function importer(txt){
   for (const [k, g] of Object.entries(reg)){
     if (g.ref < deb) continue;
     g.debut = g.ref.slice(0,7) + '-01';
+    // Injection de la date de fin maximale trouvée dans mx pour les séries terminées
+    if (mx[k] && mx[k] < top) {
+      g.fin = mx[k];
+    }
     delete g.ref; S.regles.push(g); nr++;
   }
   sauver(); rendre(); msg(`${n} opérations et ${nr} références fixes importées.`);
