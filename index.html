@@ -359,7 +359,7 @@ function projections(uid, jusqua){
   const n = new Date(), r = [];
   for (let i = 1; i <= 2; i++){
     const ym = iso(new Date(n.getFullYear(), n.getMonth()+i, 1)).slice(0,7), d = ym+'-12';
-    if (d > hingga || S.ops.some(o => o.reg === ym)) continue;
+    if (d > jusqua || S.ops.some(o => o.reg === ym)) continue;
     const c = commun(ym); if (Math.abs(c.e) < .005) continue;
     const [du, cr] = c.e > 0 ? [1, 0] : [0, 1], a = Math.abs(c.e), debiteur = S.users[du].id === uid;
     if (!debiteur && S.users[cr].id !== uid) continue;
@@ -510,20 +510,12 @@ function detail(){
   const vis = lignes.filter(ok).reverse();
   $('d-list').innerHTML = vis.map(o => ligne(o.x, F.roll ? o.s : undefined)).join('') || '<p class="mu" style="text-align:center;padding:10px">Aucune opération correspondante</p>';
   
-  // Affichage des références fixes avec les badges d'état (retiré / modifié)
+  // Affichage des références fixes avec le bouton 🔄 de resynchronisation complète
   $('regles').innerHTML = S.regles.map((g, i) => g.u !== U ? '' : `<div class="op-item" onclick="ouvrirTpl(${i})">
     <div class="op-info">
       <div class="op-label">${esc(g.l)} ${g.c?'🤝':''}</div>
       <div class="op-sub">Chaque mois le ${g.jour}</div>
-      ${Object.keys(g.exc||{}).map(k => {
-        const ex = g.exc[k];
-        if (ex.skip) {
-          return `<div class="op-sub">retiré : ${k.slice(5)}/${k.slice(0,4)} <u onclick="event.stopPropagation();delete S.regles[${i}].exc['${k}'];sauver();rendre()">annuler</u></div>`;
-        } else if (ex && (ex.m !== undefined || ex.d !== undefined || ex.c !== undefined)) {
-          return `<div class="op-sub" style="color:var(--warning)">modifié : ${k.slice(5)}/${k.slice(0,4)} <u onclick="event.stopPropagation();delete S.regles[${i}].exc['${k}'];sauver();rendre()">annuler</u></div>`;
-        }
-        return '';
-      }).join('')}
+      ${Object.keys(g.exc||{}).filter(k => g.exc[k].skip).map(k => `<div class="op-sub">retiré : ${k.slice(5)}/${k.slice(0,4)} <u onclick="event.stopPropagation();delete S.regles[${i}].exc['${k}'];sauver();rendre()">annuler</u></div>`).join('')}
     </div>
     <div class="op-right">
       <div class="op-amount ${g.m<0?'red':'green'}">${g.m>0?'+':''}${eur(g.m)}</div>
@@ -586,7 +578,7 @@ function ouvrir(id){
 }
 
 function enregistrer(){
-  const l = $('f-l').value.trim(), v = Math.abs(parseFloat($('f-m').value)), d = $('f-d').value, sg = +$('f-t').value, c = $('f-c').value === '1';
+  const l = $('f-l').value.trim(), v = Math.abs(parseFloat($('f-m'.replace('','')))), d = $('f-d').value, sg = +$('f-t').value, c = $('f-c').value === '1';
   const valNum = parseFloat($('f-m').value);
   if (!l || isNaN(valNum) || !d) return msg('Libellé, montant et date sont requis.');
   
