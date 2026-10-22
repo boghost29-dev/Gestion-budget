@@ -219,7 +219,7 @@ const iso = d => d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate());
 const today = () => iso(new Date());
 const eur = n => n.toLocaleString('fr-FR',{style:'currency',currency:'EUR'});
 const esc = s => String(s).replace(/[&<>"]/g, c => '&#'+c.charCodeAt(0)+';');
-const fd = d => d.slice(8)+'-'+d.slice(5,7)+'-'+d.slice(0,4); // Affichage DD-MM-YYYY ou format FR lisible
+const fd = d => d.slice(8)+'/'+d.slice(5,7)+'/'+d.slice(0,4);
 const usr = id => S.users.find(u => u.id === id);
 const somme = l => l.reduce((a, x) => a + x.m, 0);
 
@@ -342,11 +342,9 @@ function brut(uid, jusqua){
       if (d < g.debut) continue;
       const k = d.slice(0,7), e = g.exc && g.exc[k];
       if (e && e.skip) continue;
-      const dd = e && e.d ? e.d : d;
-      const mm = e && e.m !== undefined ? e.m : g.m;
-      const ll = e && e.l !== undefined ? e.l : g.l;
-      const cc = e && e.c !== undefined ? e.c : g.c;
-      if (dd <= jusqua) r.push({u:uid, d:dd, l:ll, m:mm, c:cc, g, k});
+      const dd = e && e.d ? e.d : d, mm = e === undefined ? g.m : (typeof e === 'object' ? e.m : e);
+      const cc = (e && e.c !== undefined) ? e.c : g.c;
+      if (dd <= jusqua) r.push({u:uid, d:dd, l:g.l, m:mm, c:cc, g, k});
     }
   }
   return r;
@@ -521,7 +519,7 @@ function detail(){
         const ex = g.exc[k];
         if (ex.skip) {
           return `<div class="op-sub">retiré : ${k.slice(5)}/${k.slice(0,4)} <u onclick="event.stopPropagation();delete S.regles[${i}].exc['${k}'];sauver();rendre()">annuler</u></div>`;
-        } else if (ex && (ex.m !== undefined || ex.d !== undefined || ex.c !== undefined || ex.l !== undefined)) {
+        } else if (ex && (ex.m !== undefined || ex.d !== undefined || ex.c !== undefined)) {
           return `<div class="op-sub" style="color:var(--warning)">modifié : ${k.slice(5)}/${k.slice(0,4)} <u onclick="event.stopPropagation();delete S.regles[${i}].exc['${k}'];sauver();rendre()">annuler</u></div>`;
         }
         return '';
@@ -535,7 +533,7 @@ function detail(){
   </div>`).join('') || '<p class="mu" style="text-align:center">Aucune référence fixe.</p>';
 }
 
-// Rafraîchissement non destructeur ciblant uniquement M+1 et M+2
+// Rafraîchissement ciblé sur M+1 et M+2 uniquement
 function refreshSingleTemplate(i) {
   const g = S.regles[i];
   if (!g || !g.exc) return;
@@ -549,7 +547,7 @@ function refreshSingleTemplate(i) {
 
   sauver();
   rendre();
-  msg(`Réinitialisation effectuée pour "${g.l}" sur M+1 et M+2 uniquement.`);
+  msg(`Réinitialisation effectuée pour "${g.l}" sur M+1 et M+2 !`);
 }
 
 function decaler(n){
@@ -586,7 +584,7 @@ function ouvrir(id){
   $('f-l').disabled = false;
   
   $('f-rbox').classList.toggle('hidden', !!ED);
-  $('f-note').textContent = men ? 'Règle mensuelle : l’ajustement (libellé, montant, date, répartition) s’appliquera exceptionnellement à ce mois-ci.' : '';
+  $('f-note').textContent = men ? 'Règle mensuelle : l’ajustement (montant, date, répartition) s’appliquera exceptionnellement à ce mois-ci.' : '';
   ouvrirM('m-op');
 }
 
@@ -602,7 +600,6 @@ function enregistrer(){
     
     g.exc = g.exc || {}; 
     g.exc[k] = { 
-      l: l,
       m: (g.m < 0 ? -1 : 1) * Math.abs(v), 
       d: d, 
       c: c 
@@ -641,8 +638,10 @@ function ouvrirTpl(i){
   $('t-f').value = g && g.fin ? g.fin : '';
   
   const now = new Date();
-  const day = g ? g.jour : 1;
-  $('t-j').value = safeDateIso(now.getFullYear(), now.getMonth(), day);
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = g ? String(g.jour).padStart(2, '0') : '01';
+  $('t-j').value = `${year}-${month}-${day}`;
   
   ouvrirM('m-tpl');
 }
@@ -676,23 +675,10 @@ function validerReg(){
   if (Math.abs(c.e) >= .005){
     const [du, cr] = c.e > 0 ? [1, 0] : [0, 1], a = Math.abs(c.e);
     S.ops.push({u:S.users[du].id, l:'Règlement charges communes ('+S.users[cr].nom+')', m:-a, d, c:false, reg:RM});
-    S.ops.push({u:S.users[cr].id, l:'Règlement charges communes ('+S.users[du].id === S.users[du].id ? S.users[cr].nom : ''+')', m:a, d, c:false, reg:RM}); // Fix template literal for user name below
-  }
-  sauver(); fermer('m-reg'); rendre(); msg('Règlement enregistré.');
-}
-
-// Correction rapide de l'affichage du nom dans validerReg
-function validerReg(){
-  const c = commun(RM), d = $('r-d').value; if (!d) return msg('Choisis une date.');
-  S.ops = S.ops.filter(o => o.reg !== RM);
-  if (Math.abs(c.e) >= .005){
-    const [du, cr] = c.e > 0 ? [1, 0] : [0, 1], a = Math.abs(c.e);
-    S.ops.push({u:S.users[du].id, l:'Règlement charges communes ('+S.users[cr].nom+')', m:-a, d, c:false, reg:RM});
     S.ops.push({u:S.users[cr].id, l:'Règlement charges communes ('+S.users[du].nom+')', m:a, d, c:false, reg:RM});
   }
   sauver(); fermer('m-reg'); rendre(); msg('Règlement enregistré.');
 }
-
 function annulerReg(){ S.ops = S.ops.filter(o => o.reg !== RM); sauver(); fermer('m-reg'); rendre(); msg('Règlement annulé.'); }
 
 function lireFichier(inp, fn){ const f = inp.files[0]; if (!f) return; const r = new FileReader(); r.onload = () => fn(r.result); r.readAsText(f); inp.value = ''; }
@@ -747,8 +733,7 @@ function importer(txt){
     const m = sg * Math.abs(nombre(r[iM])), l = r[iL] || '', c = (iC >= 0 && r[iC] === 'Oui') || (iP >= 0 && r[iP] === 'Commune'), k0 = l+'|'+sg+'|'+(c ? 1 : 0);
     if (/^Règlement charges communes \(Projection/i.test(l)) continue;
     if (r[iR] === 'Mensuel' || r[iR] === 'Oui'){
-      if (!mx[k0] || d > mx[k0]) mx[k0] = d;
-      if (d > top) top = d;
+      if (d > (mx[k0] || '')) mx[k0] = d; if (d > top) top = d;
       const g = reg[k0];
       if (!g || (d >= deb ? (g.ref < deb || d < g.ref) : (g.ref < deb && d > g.ref))) reg[k0] = {u:U, l, m, c, jour:+dd[0], debut:deb, ref:d};
       if (d >= deb) continue;
@@ -760,10 +745,6 @@ function importer(txt){
   for (const [k, g] of Object.entries(reg)){
     if (g.ref < deb) continue;
     g.debut = g.ref.slice(0,7) + '-01';
-    // Injection de la date de fin maximale trouvée dans mx pour les séries terminées
-    if (mx[k] && mx[k] < top) {
-      g.fin = mx[k];
-    }
     delete g.ref; S.regles.push(g); nr++;
   }
   sauver(); rendre(); msg(`${n} opérations et ${nr} références fixes importées.`);
