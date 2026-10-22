@@ -219,7 +219,7 @@ const iso = d => d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate());
 const today = () => iso(new Date());
 const eur = n => n.toLocaleString('fr-FR',{style:'currency',currency:'EUR'});
 const esc = s => String(s).replace(/[&<>"]/g, c => '&#'+c.charCodeAt(0)+';');
-const fd = d => d.slice(8)+'-'+d.slice(5,7)+'-'+d.slice(0,4); // Affichage DD-MM-YYYY ou format FR lisible
+const fd = d => d.slice(8)+'-'+d.slice(5,7)+'-'+d.slice(0,4);
 const usr = id => S.users.find(u => u.id === id);
 const somme = l => l.reduce((a, x) => a + x.m, 0);
 
@@ -513,15 +513,17 @@ function detail(){
   const vis = lignes.filter(ok).reverse();
   $('d-list').innerHTML = vis.map(o => ligne(o.x, F.roll ? o.s : undefined)).join('') || '<p class="mu" style="text-align:center;padding:10px">Aucune opération correspondante</p>';
   
+  // Affichage corrigé et robuste de toutes les exceptions (retiré et modifié)
   $('regles').innerHTML = S.regles.map((g, i) => g.u !== U ? '' : `<div class="op-item" onclick="ouvrirTpl(${i})">
     <div class="op-info">
       <div class="op-label">${esc(g.l)} ${g.c?'🤝':''}</div>
       <div class="op-sub">Chaque mois le ${g.jour} ${g.fin ? 'jusqu’au ' + fd(g.fin) : ''}</div>
       ${Object.keys(g.exc||{}).map(k => {
         const ex = g.exc[k];
+        if (!ex) return '';
         if (ex.skip) {
-          return `<div class="op-sub">retiré : ${k.slice(5)}/${k.slice(0,4)} <u onclick="event.stopPropagation();delete S.regles[${i}].exc['${k}'];sauver();rendre()">annuler</u></div>`;
-        } else if (ex && (ex.m !== undefined || ex.d !== undefined || ex.c !== undefined || ex.l !== undefined)) {
+          return `<div class="op-sub" style="color:var(--red)">retiré : ${k.slice(5)}/${k.slice(0,4)} <u onclick="event.stopPropagation();delete S.regles[${i}].exc['${k}'];sauver();rendre()">annuler</u></div>`;
+        } else if (ex.m !== undefined || ex.d !== undefined || ex.c !== undefined || ex.l !== undefined) {
           return `<div class="op-sub" style="color:var(--warning)">modifié : ${k.slice(5)}/${k.slice(0,4)} <u onclick="event.stopPropagation();delete S.regles[${i}].exc['${k}'];sauver();rendre()">annuler</u></div>`;
         }
         return '';
@@ -535,7 +537,6 @@ function detail(){
   </div>`).join('') || '<p class="mu" style="text-align:center">Aucune référence fixe.</p>';
 }
 
-// Rafraîchissement non destructeur ciblant uniquement M+1 et M+2
 function refreshSingleTemplate(i) {
   const g = S.regles[i];
   if (!g || !g.exc) return;
@@ -676,18 +677,6 @@ function validerReg(){
   if (Math.abs(c.e) >= .005){
     const [du, cr] = c.e > 0 ? [1, 0] : [0, 1], a = Math.abs(c.e);
     S.ops.push({u:S.users[du].id, l:'Règlement charges communes ('+S.users[cr].nom+')', m:-a, d, c:false, reg:RM});
-    S.ops.push({u:S.users[cr].id, l:'Règlement charges communes ('+S.users[du].id === S.users[du].id ? S.users[cr].nom : ''+')', m:a, d, c:false, reg:RM}); // Fix template literal for user name below
-  }
-  sauver(); fermer('m-reg'); rendre(); msg('Règlement enregistré.');
-}
-
-// Correction rapide de l'affichage du nom dans validerReg
-function validerReg(){
-  const c = commun(RM), d = $('r-d').value; if (!d) return msg('Choisis une date.');
-  S.ops = S.ops.filter(o => o.reg !== RM);
-  if (Math.abs(c.e) >= .005){
-    const [du, cr] = c.e > 0 ? [1, 0] : [0, 1], a = Math.abs(c.e);
-    S.ops.push({u:S.users[du].id, l:'Règlement charges communes ('+S.users[cr].nom+')', m:-a, d, c:false, reg:RM});
     S.ops.push({u:S.users[cr].id, l:'Règlement charges communes ('+S.users[du].nom+')', m:a, d, c:false, reg:RM});
   }
   sauver(); fermer('m-reg'); rendre(); msg('Règlement enregistré.');
@@ -760,7 +749,6 @@ function importer(txt){
   for (const [k, g] of Object.entries(reg)){
     if (g.ref < deb) continue;
     g.debut = g.ref.slice(0,7) + '-01';
-    // Injection de la date de fin maximale trouvée dans mx pour les séries terminées
     if (mx[k] && mx[k] < top) {
       g.fin = mx[k];
     }
