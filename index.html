@@ -6,7 +6,7 @@
 <title>Mes Comptes</title>
 
 <!-- Manifest WebApp directement intégré pour l'installation mobile -->
-<link rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogIk1lcyBDb21wdGVzIiwKICAic3RhcnRfdXJsIjogIi4vIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjMDkwZDE2IiwKICAidGhlbWVfY29sb3IiOiAiIzA5MGQxNiIsCiAgImljb25zIjogWwogICAgewogICAgICAic3JjIjogImRhdGE6aW1hZ2Uvc3ZnK3htbCw8c3ZnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zycgdmlld0JveD0nMCAw IDEwMCAxMDAnPjxyZWN0IHdpZHRoPScxMDAnIGhlaWdodD0nMTAwJyByeD0nMjInIGZpbGw9JyUwOTBkMTYnLz48cGF0aCBkPSdNNTAgMTUgTDE1IDQ1IEwyNSA0NSBMMjUgODIgTDc1IDgy LDc1IDQ1IEw4NSA0NSBaJyBmaWxsPSclMjNmZmZmZmYnLz48dGV4dCB4PSc1MCUnIHk9JzY3JScgZm9udC1zaXplPSczMicgZm9udC13ZWlnaHQ9JzkwMCcgZm9udC1mYW1pbHk9J3NhbnMtc2VyaWYnIHRleHQtYW5jaG9yPSdtaWRkbGUnIGZpbGw9JyUwOTBkMTYnPsK1PC90ZXh0Pjwvc3ZnPiIsCiAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInR5cGUiOiAiaW1hZ2Uvc3ZnK3htbCIsCiAgICAgICJwdXJwb3NlIjogImFueSBtYXJrYWJsZSIKICAgIH0KICBdCn0=">
+<link rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogIk1lcyBDb21wdGVzIiwKICAic2hvcnRfbmFtZSI6ICJDb21wdGVzIiwKICAic3RhcnRfdXJsIjogIi4vIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjMDkwZDE2IiwKICAidGhlbWVfY29sb3IiOiAiIzA5MGQxNiIsCiAgImljb25zIjogWwogICAgewogICAgICAic3JjIjogImRhdGE6aW1hZ2Uvc3ZnK3htbCw8c3ZnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zycgdmlld0JveD0nMCAw IDEwMCAxMDAnPjxyZWN0IHdpZHRoPScxMDAnIGhlaWdodD0nMTAwJyByeD0nMjInIGZpbGw9JyUwOTBkMTYnLz48cGF0aCBkPSdNNTAgMTUgTDE1IDQ1IEwyNSA0NSBMMjUgODIgTDc1IDgy LDc1IDQ1IEw4NSA0NSBaJyBmaWxsPSclMjNmZmZmZmYnLz48dGV4dCB4PSc1MCUnIHk9JzY3JScgZm9udC1zaXplPSczMicgZm9udC13ZWlnaHQ9JzkwMCcgZm9udC1mYW1pbHk9J3NhbnMtc2VyaWYnIHRleHQtYW5jaG9yPSdtaWRkbGUnIGZpbGw9JyUwOTBkMTYnPsK1PC90ZXh0Pjwvc3ZnPiIsCiAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInR5cGUiOiAiaW1hZ2Uvc3ZnK3htbCIsCiAgICAgICJwdXJwb3NlIjogImFueSBtYXJrYWJsZSIKICAgIH0KICBdCn0=">
 
 <!-- Icône SVG pour Favoris, Onglets et Écran d'accueil -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23090d16'/><path d='M50 15 L15 45 L25 45 L25 82 L75 82 L75 45 L85 45 Z' fill='%23ffffff'/><text x='50%' y='67%' font-size='32' font-weight='900' font-family='sans-serif' text-anchor='middle' fill='%23090d16'>€</text></svg>">
@@ -83,7 +83,7 @@ label{font-size:.78rem;color:var(--text-muted);display:flex;flex-direction:colum
 label.row{flex-direction:row;align-items:center;gap:8px;color:var(--text)}
 input,select,textarea{background:rgba(15,23,42,.9);border:1px solid var(--border);border-radius:12px;padding:11px;color:var(--text);font-size:.92rem;width:100%;outline:none}
 
-/* Rend l'icône du calendrier et des sélecteurs de date/mois nativement blancs */
+/* Rendre le calendrier et le sélecteur de date/mois nativement blancs */
 input[type="date"], input[type="month"] {
   color-scheme: dark;
 }
@@ -509,7 +509,7 @@ function detail(){
   const vis = lignes.filter(ok).reverse();
   $('d-list').innerHTML = vis.map(o => ligne(o.x, F.roll ? o.s : undefined)).join('') || '<p class="mu" style="text-align:center;padding:10px">Aucune opération correspondante</p>';
   
-  // Affichage des références fixes avec le bouton 🔄 de resynchronisation pour M+1 et M+2 uniquement
+  // Affichage des références fixes avec le bouton 🔄 de resynchronisation complète
   $('regles').innerHTML = S.regles.map((g, i) => g.u !== U ? '' : `<div class="op-item" onclick="ouvrirTpl(${i})">
     <div class="op-info">
       <div class="op-label">${esc(g.l)} ${g.c?'🤝':''}</div>
@@ -518,33 +518,23 @@ function detail(){
     </div>
     <div class="op-right">
       <div class="op-amount ${g.m<0?'red':'green'}">${g.m>0?'+':''}${eur(g.m)}</div>
-      <button class="del-btn" style="background:rgba(99,102,241,0.25);color:#818cf8;margin-right:4px;" title="Réinitialiser et synchroniser sur M+1 et M+2 uniquement" onclick="event.stopPropagation();refreshSingleTemplate(${i})">🔄</button>
+      <button class="del-btn" style="background:rgba(99,102,241,0.25);color:#818cf8;margin-right:4px;" title="Réinitialiser et rétablir toutes les échéances" onclick="event.stopPropagation();refreshSingleTemplate(${i})">🔄</button>
       <button class="del-btn" onclick="event.stopPropagation();S.regles.splice(${i},1);sauver();rendre()">✕</button>
     </div>
   </div>`).join('') || '<p class="mu" style="text-align:center">Aucune référence fixe.</p>';
 }
 
-// Fonction de rafraîchissement ciblant spécifiquement la référence sélectionnée (i) pour M+1 et M+2 uniquement
+// Réinitialisation globale des exceptions pour faire réapparaître l'opération sur TOUS les mois
 function refreshSingleTemplate(i) {
   const g = S.regles[i];
   if (!g) return;
 
-  const n = new Date();
-
-  // On boucle uniquement sur mOffset = 1 (M+1) et mOffset = 2 (M+2)
-  for (let mOffset = 1; mOffset <= 2; mOffset++) {
-    const targetDate = new Date(n.getFullYear(), n.getMonth() + mOffset, 1);
-    const ym = iso(targetDate).slice(0, 7);
-
-    // Supprime d'éventuelles exceptions/modifications appliquées sur ces mois futurs
-    if (g.exc && g.exc[ym]) {
-      delete g.exc[ym];
-    }
-  }
+  // Purge complète de toutes les annulations/modifications ponctuelles
+  g.exc = {};
 
   sauver();
   rendre();
-  msg(`Réinitialisation de "${g.l}" effectuée pour M+1 et M+2 !`);
+  msg(`Réinitialisation effectuée pour "${g.l}" ! Toutes les échéances sont rétablies.`);
 }
 
 function decaler(n){
