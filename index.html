@@ -6,7 +6,7 @@
 <title>Mes Comptes</title>
 
 <!-- Manifest WebApp directement intégré pour l'installation mobile -->
-<link rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogIk1lcyBDb21wdGVzIiwKICAic3RhcnRfdXJsIjogIi4vIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjMDkwZDE2IiwKICAidGhlbWVfY29sb3IiOiAiIzA5MGQxNiIsCiAgImljb25zIjogWwogICAgewogICAgICAic3JjIjogImRhdGE6aW1hZ2Uvc3ZnK3htbCw8c3ZnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zycgdmlld0JveD0nMCAwIDEwMCAxMDAnPjxyZWN0IHdpZHRoPScxMDAnIGhlaWdodD0nMTAwJyByeD0nMjInIGZpbGw9JyUwOTBkMTYnLz48cGF0aCBkPSdNNTAgMTUgTDE1IDQ1IEwyNSA0NSBMMjUgODIgTDc1IDgy LDc1IDQ1IEw4NSA0NSBaJyBmaWxsPSclMjNmZmZmZmYnLz48dGV4dCB4PSc1MCUnIHk9JzY3JScgZm9udC1zaXplPSczMicgZm9udC13ZWlnaHQ9JzkwMCcgZm9udC1mYW1pbHk9J3NhbnMtc2VyaWYnIHRleHQtYW5jaG9yPSdtaWRkbGUnIGZpbGw9JyUwOTBkMTYnPsK1PC90ZXh0Pjwvc3ZnPiIsCiAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInR5cGUiOiAiaW1hZ2Uvc3ZnK3htbCIsCiAgICAgICJwdXJwb3NlIjogImFueSBtYXJrYWJsZSIKICAgIH0KICBdCn0=">
+<link rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogIk1lcyBDb21wdGVzIiwKICAic2hvcnRfbmFtZSI6ICJDb21wdGVzIiwKICAic3RhcnRfdXJsIjogIi4vIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjMDkwZDE2IiwKICAidGhlbWVfY29sb3IiOiAiIzA5MGQxNiIsCiAgImljb25zIjogWwogICAgewogICAgICAic3JjIjogImRhdGE6aW1hZ2Uvc3ZnK3htbCw8c3ZnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zycgdmlld0JveD0nMCAwIDEwMCAxMDAnPjxyZWN0IHdpZHRoPScxMDAnIGhlaWdodD0nMTAwJyByeD0nMjInIGZpbGw9JyUwOTBkMTYnLz48cGF0aCBkPSdNNTAgMTUgTDE1IDQ1IEwyNSA0NSBMMjUgODIgTDc1IDgy LDc1IDQ1IEw4NSA0NSBaJyBmaWxsPSclMjNmZmZmZmYnLz48dGV4dCB4PSc1MCUnIHk9JzY3JScgZm9udC1zaXplPSczMicgZm9udC13ZWlnaHQ9JzkwMCcgZm9udC1mYW1pbHk9J3NhbnMtc2VyaWYnIHRleHQtYW5jaG9yPSdtaWRkbGUnIGZpbGw9JyUwOTBkMTYnPsK1PC90ZXh0Pjwvc3ZnPiIsCiAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInR5cGUiOiAiaW1hZ2Uvc3ZnK3htbCIsCiAgICAgICJwdXJwb3NlIjogImFueSBtYXJrYWJsZSIKICAgIH0KICBdCn0=">
 
 <!-- Icône SVG pour Favoris, Onglets et Écran d'accueil -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23090d16'/><path d='M50 15 L15 45 L25 45 L25 82 L75 82 L75 45 L85 45 Z' fill='%23ffffff'/><text x='50%' y='67%' font-size='32' font-weight='900' font-family='sans-serif' text-anchor='middle' fill='%23090d16'>€</text></svg>">
@@ -82,12 +82,6 @@ nav.ios-nav{position:absolute;bottom:0;left:0;width:100%;background:rgba(15,23,4
 label{font-size:.78rem;color:var(--text-muted);display:flex;flex-direction:column;gap:4px;font-weight:500}
 label.row{flex-direction:row;align-items:center;gap:8px;color:var(--text)}
 input,select,textarea{background:rgba(15,23,42,.9);border:1px solid var(--border);border-radius:12px;padding:11px;color:var(--text);font-size:.92rem;width:100%;outline:none}
-
-/* Rendre le calendrier et le sélecteur de date/mois nativement blancs */
-input[type="date"], input[type="month"] {
-  color-scheme: dark;
-}
-
 input[type=checkbox]{width:16px;height:16px}
 details{background:rgba(15,23,42,.2);border:1px solid var(--border);border-radius:12px;padding:10px 14px;margin-bottom:8px}
 summary{font-weight:600;cursor:pointer;color:var(--text);font-size:.85rem;outline:none}
@@ -189,7 +183,6 @@ summary{font-weight:600;cursor:pointer;color:var(--text);font-size:.85rem;outlin
   <label>Type<select id="t-t2"><option value="-1">Débit (Dépense récurrente)</option><option value="1">Crédit (Revenu récurrent)</option></select></label>
   <label>Répartition<select id="t-c"><option value="0">Personnel</option><option value="1">Charge commune (50/50)</option></select></label>
   <label>Date / Jour du mois (choisir une date)<input type="date" id="t-j"></label>
-  <label>Date de fin (optionnel)<input type="date" id="t-f"></label>
   <p class="mu">Les changements valent pour toutes les échéances de cette référence.</p>
   <button class="btn-primary" onclick="enregistrerTpl()">Sauvegarder le modèle</button></div>
 </div></div>
@@ -223,12 +216,6 @@ const fd = d => d.slice(8)+'/'+d.slice(5,7)+'/'+d.slice(0,4);
 const usr = id => S.users.find(u => u.id === id);
 const somme = l => l.reduce((a, x) => a + x.m, 0);
 
-// Fonction sécurisée pour fabriquer une date sans dépassement (ex: éviter 31 nov -> 30 nov)
-const safeDateIso = (y, m, day) => {
-  const nb = new Date(y, m + 1, 0).getDate();
-  return iso(new Date(y, m, Math.min(day, nb)));
-};
-
 function msg(t){
   const e = $('toast');
   e.textContent = t;
@@ -255,7 +242,7 @@ function majStatutReseau() {
 window.addEventListener('online', majStatutReseau);
 window.addEventListener('offline', majStatutReseau);
 
-// Détecter l'utilisateur via l'URL
+// Détecter l'utilisateur via l'URL (ex: ?user=prescillia ou ?u=b)
 function detecterUserUrl() {
   const params = new URLSearchParams(window.location.search);
   const uParam = params.get('user') || params.get('u');
@@ -274,6 +261,8 @@ function detecterUserUrl() {
 
 async function chargerCloud(){
   detecterUserUrl();
+  
+  // Lecture du secours local si disponible (Hors ligne)
   const localBackup = localStorage.getItem('mon_budget_local_data');
   if (localBackup) {
     try { S = JSON.parse(localBackup); } catch(e){}
@@ -314,11 +303,13 @@ async function chargerCloud(){
 }
 
 async function sauver(){
+  // 1. Sauvegarde locale immédiate (Sécurité hors ligne)
   localStorage.setItem('mon_budget_local_data', JSON.stringify(S));
 
+  // 2. Synchronisation Cloud Supabase si en ligne
   if (navigator.onLine) {
     try {
-      const res = await fetch(`${SB_URL}/rest/v1/app_data?id=eq.1`, {
+      await fetch(`${SB_URL}/rest/v1/app_data?id=eq.1`, {
         method: 'PATCH',
         headers: {
           'apikey': SB_KEY,
@@ -328,9 +319,6 @@ async function sauver(){
         },
         body: JSON.stringify({ payload: S })
       });
-      if (!res.ok) {
-        console.warn('Erreur synchronisation cloud, code:', res.status);
-      }
     } catch(e){ console.error('Erreur sauvegarde cloud', e); msg('Sauvegarde locale effectuée.'); }
   }
 }
@@ -340,14 +328,13 @@ function brut(uid, jusqua){
   for (const g of S.regles.filter(g => g.u === uid)){
     const [y, m0] = g.debut.split('-').map(Number);
     for (let m = m0 - 1; ; m++){
-      const d = safeDateIso(y, m, g.jour);
+      const nb = new Date(y, m + 1, 0).getDate(), d = iso(new Date(y, m, Math.min(g.jour, nb)));
       if (iso(new Date(y, m - 1, 1)) > jusqua || (g.fin && d > g.fin)) break;
       if (d < g.debut) continue;
       const k = d.slice(0,7), e = g.exc && g.exc[k];
       if (e && e.skip) continue;
       const dd = e && e.d ? e.d : d, mm = e === undefined ? g.m : (typeof e === 'object' ? e.m : e);
-      const cc = (e && e.c !== undefined) ? e.c : g.c;
-      if (dd <= jusqua) r.push({u:uid, d:dd, l:g.l, m:mm, c:cc, g, k});
+      if (dd <= jusqua) r.push({u:uid, d:dd, l:g.l, m:mm, c:g.c, g, k});
     }
   }
   return r;
@@ -365,7 +352,7 @@ function projections(uid, jusqua){
   const n = new Date(), r = [];
   for (let i = 1; i <= 2; i++){
     const ym = iso(new Date(n.getFullYear(), n.getMonth()+i, 1)).slice(0,7), d = ym+'-12';
-    if (d > hingga || S.ops.some(o => o.reg === ym)) continue;
+    if (d > jusqua || S.ops.some(o => o.reg === ym)) continue;
     const c = commun(ym); if (Math.abs(c.e) < .005) continue;
     const [du, cr] = c.e > 0 ? [1, 0] : [0, 1], a = Math.abs(c.e), debiteur = S.users[du].id === uid;
     if (!debiteur && S.users[cr].id !== uid) continue;
@@ -402,6 +389,7 @@ function ligne(x, s){
   </div>`;
 }
 
+// Clics pour déverrouiller (10) ou verrouiller (7) les utilisateurs
 let clickCount = 0;
 let clickTimer = null;
 
@@ -440,6 +428,7 @@ function handleUserClick(targetUid){
   }
 }
 
+// 10 clics sur l'onglet Options pour débloquer/bloquer la zone de test
 let testClickCount = 0;
 let testClickTimer = null;
 
@@ -514,23 +503,16 @@ function detail(){
   const vis = lignes.filter(ok).reverse();
   $('d-list').innerHTML = vis.map(o => ligne(o.x, F.roll ? o.s : undefined)).join('') || '<p class="mu" style="text-align:center;padding:10px">Aucune opération correspondante</p>';
   
+  // Affichage des références fixes avec le bouton 🔄 de resynchronisation M+1/M+2
   $('regles').innerHTML = S.regles.map((g, i) => g.u !== U ? '' : `<div class="op-item" onclick="ouvrirTpl(${i})">
     <div class="op-info">
       <div class="op-label">${esc(g.l)} ${g.c?'🤝':''}</div>
-      <div class="op-sub">Chaque mois le ${g.jour} ${g.fin ? 'jusqu’au ' + fd(g.fin) : ''}</div>
-      ${Object.keys(g.exc||{}).map(k => {
-        const ex = g.exc[k];
-        if (ex.skip) {
-          return `<div class="op-sub">retiré : ${k.slice(5)}/${k.slice(0,4)} <u onclick="event.stopPropagation();delete S.regles[${i}].exc['${k}'];sauver();rendre()">annuler</u></div>`;
-        } else if (ex && (ex.m !== undefined || ex.d !== undefined || ex.c !== undefined)) {
-          return `<div class="op-sub" style="color:var(--warning)">modifié : ${k.slice(5)}/${k.slice(0,4)} <u onclick="event.stopPropagation();delete S.regles[${i}].exc['${k}'];sauver();rendre()">annuler</u></div>`;
-        }
-        return '';
-      }).join('')}
+      <div class="op-sub">Chaque mois le ${g.jour}</div>
+      ${Object.keys(g.exc||{}).filter(k => g.exc[k].skip).map(k => `<div class="op-sub">retiré : ${k.slice(5)}/${k.slice(0,4)} <u onclick="event.stopPropagation();delete S.regles[${i}].exc['${k}'];sauver();rendre()">annuler</u></div>`).join('')}
     </div>
     <div class="op-right">
       <div class="op-amount ${g.m<0?'red':'green'}">${g.m>0?'+':''}${eur(g.m)}</div>
-      <button class="del-btn" style="background:rgba(99,102,241,0.25);color:#818cf8;margin-right:4px;" title="Réinitialiser et rétablir toutes les échéances" onclick="event.stopPropagation();refreshSingleTemplate(${i})">🔄</button>
+      <button class="del-btn" style="background:rgba(99,102,241,0.25);color:#818cf8;margin-right:4px;" title="Réinitialiser et synchroniser sur M+1 et M+2" onclick="event.stopPropagation();refreshSingleTemplate(${i})">🔄</button>
       <button class="del-btn" onclick="event.stopPropagation();S.regles.splice(${i},1);sauver();rendre()">✕</button>
     </div>
   </div>`).join('') || '<p class="mu" style="text-align:center">Aucune référence fixe.</p>';
@@ -539,10 +521,23 @@ function detail(){
 function refreshSingleTemplate(i) {
   const g = S.regles[i];
   if (!g) return;
-  g.exc = {};
+
+  const n = new Date();
+  let countUpdated = 0;
+
+  for (let mOffset = 1; mOffset <= 2; mOffset++) {
+    const targetDate = new Date(n.getFullYear(), n.getMonth() + mOffset, 1);
+    const ym = iso(targetDate).slice(0, 7);
+
+    if (g.exc && g.exc[ym]) {
+      delete g.exc[ym];
+      countUpdated++;
+    }
+  }
+
   sauver();
   rendre();
-  msg(`Réinitialisation effectuée pour "${g.l}" ! Toutes les échéances sont rétablies.`);
+  msg(`Synchronisation de "${g.l}" effectuée pour M+1 et M+2 !`);
 }
 
 function decaler(n){
@@ -569,58 +564,33 @@ function ouvrir(id){
   $('m-t').textContent = x ? 'Modifier l’opération' : 'Nouvelle opération';
   $('f-l').value = x ? x.l : ''; 
   $('f-m').value = x ? Math.abs(x.m) : ''; 
-  $('f-t').value = x && x.m > 0 ? '1' : '-1';
-  $('f-c').value = x && x.c ? '1' : '0'; 
+  $('f-t').value = x && x.m > 0 ? '1' : '-1';$('f-c').value = x && x.c ? '1' : '0'; 
   $('f-d').value = x ? x.d : today(); 
   $('f-r').checked = false; 
   
-  $('f-t').disabled = men;
-  $('f-c').disabled = false;
-  $('f-l').disabled = false;
+  ['f-t','f-c'].forEach(i => $(i).disabled = men);$('f-l').disabled = false;
   
-  $('f-rbox').classList.toggle('hidden', !!ED);
-  $('f-note').textContent = men ? 'Règle mensuelle : l’ajustement (montant, date, répartition) s’appliquera exceptionnellement à ce mois-ci.' : '';
+  $('f-rbox').classList.toggle('hidden', !!ED);$('f-note').textContent = men ? 'Règle mensuelle : l’ajustement de montant ne s’appliquera qu’à ce mois-ci.' : '';
   ouvrirM('m-op');
 }
 
 function enregistrer(){
-  const l = $('f-l').value.trim(), v = Math.abs(parseFloat($('f-m').value)), d = $('f-d').value, sg = +$('f-t').value, c = $('f-c').value === '1';
+  const l = $('f-l').value.trim(), v = Math.abs(parseFloat($('f-m').value)), d =$('f-d').value, sg = +$('f-t').value, c =$('f-c').value === '1';
   if (!l || isNaN(v) || !d) return msg('Libellé, montant et date sont requis.');
-  
   if (ED[0] === 'r'){
-    const parts = ED.slice(1).split('|');
-    const rIdx = +parts[0];
-    const k = parts[1];
-    const g = S.regles[rIdx];
-    
-    g.exc = g.exc || {}; 
-    g.exc[k] = { 
-      m: (g.m < 0 ? -1 : 1) * Math.abs(v), 
-      d: d, 
-      c: c 
-    };
-  } else if (ED[0] === 'o') {
-    Object.assign(S.ops[+ED.slice(1)], {l, m: sg * Math.abs(v), d, c});
-  } else if ($('f-r').checked){
-    S.regles.push({u:U, l, m: sg * Math.abs(v), c, jour:+d.slice(8), debut:d});
-  } else {
-    S.ops.push({u:U, l, m: sg * Math.abs(v), d, c});
-  }
+    const [r, k] = ED.slice(1).split('|'), g = S.regles[+r];
+    g.exc = g.exc || {}; g.exc[k] = {m:(g.m < 0 ? -1 : 1) * v, d};
+  } else if (ED[0] === 'o') Object.assign(S.ops[+ED.slice(1)], {l, m:sg*v, d, c});
+  else if ($('f-r').checked){
+    S.regles.push({u:U, l, m:sg*v, c, jour:+d.slice(8), debut:d});
+  } else S.ops.push({u:U, l, m:sg*v, d, c});
   sauver(); fermer('m-op'); rendre();
 }
 
 function supprimer(i){ S.ops.splice(i, 1); sauver(); rendre(); }
 function retirer(id){
-  const parts = id.slice(1).split('|');
-  const rIdx = +parts[0];
-  const k = parts[1];
-  const g = S.regles[rIdx];
-  
-  g.exc = g.exc || {}; 
-  g.exc[k] = { skip: true }; 
-  sauver(); 
-  rendre(); 
-  msg('Échéance retirée.');
+  const [r, k] = id.slice(1).split('|'), g = S.regles[+r];
+  g.exc = g.exc || {}; g.exc[k] = {skip:true}; sauver(); rendre(); msg('Échéance retirée.');
 }
 
 function ouvrirTpl(i){
@@ -628,9 +598,7 @@ function ouvrirTpl(i){
   $('t-t').textContent = g ? 'Modifier la référence fixe' : 'Référence fixe mensuelle';
   $('t-l').value = g ? g.l : ''; 
   $('t-m').value = g ? Math.abs(g.m) : ''; 
-  $('t-t2').value = g && g.m > 0 ? '1' : '-1';
-  $('t-c').value = g && g.c ? '1' : '0'; 
-  $('t-f').value = g && g.fin ? g.fin : '';
+  $('t-t2').value = g && g.m > 0 ? '1' : '-1';$('t-c').value = g && g.c ? '1' : '0'; 
   
   const now = new Date();
   const year = now.getFullYear();
@@ -642,16 +610,16 @@ function ouvrirTpl(i){
 }
 
 function enregistrerTpl(){
-  const l = $('t-l').value.trim(), v = Math.abs(parseFloat($('t-m').value)), dateVal = $('t-j').value, dateFinVal = $('t-f').value, sg = +$('t-t2').value, c = $('t-c').value === '1';
+  const l = $('t-l').value.trim(), v = Math.abs(parseFloat($('t-m').value)), dateVal =$('t-j').value, sg = +$('t-t2').value, c =$('t-c').value === '1';
   if (!l || isNaN(v) || !dateVal) return msg('Libellé, montant et date sont requis.');
   
   const jour = parseInt(dateVal.slice(8), 10);
   
   if (ET >= 0) {
-    Object.assign(S.regles[ET], {l, m: sg * v, c, jour, fin: dateFinVal || null});
+    Object.assign(S.regles[ET], {l, m:sg*v, c, jour});
   } else {
     const n = new Date(); 
-    S.regles.push({u:U, l, m: sg * v, c, jour, debut: iso(new Date(n.getFullYear(), n.getMonth(), 1)), fin: dateFinVal || null}); 
+    S.regles.push({u:U, l, m:sg*v, c, jour, debut:iso(new Date(n.getFullYear(), n.getMonth(), 1))}); 
   }
   
   sauver(); fermer('m-tpl'); rendre();
@@ -699,12 +667,11 @@ function importerJSON(txt){
   msg('Format de fichier JSON non reconnu.');
 }
 
-/* CORRECTION DE PARSECSV : Le else f += x; a bien été restauré ici */
 function parseCSV(t){
   const L = []; let c = [], f = '', q = false;
   for (let i = 0; i < t.length; i++){
     const x = t[i];
-    if (q){ if (x === '"'){ if (t[i+1] === '"'){ f += '"'; i++; } else q = false; } else f += x; }
+    if (q){ if (x === '"'){ if (t[i+1] === '"'){ f += '"'; i++; } else q = false; } else q = false; }
     else if (x === '"') q = true;
     else if (x === ',') { c.push(f); f = ''; }
     else if (x === '\n' || x === '\r'){ if (x === '\r' && t[i+1] === '\n') i++; c.push(f); L.push(c); c = []; f = ''; }
@@ -758,6 +725,7 @@ $('filtres').innerHTML = [['deb','Débits'],['cre','Crédits'],['men','Récurren
 
 chargerCloud();
 
+// Enregistrement dynamique du Service Worker pour l'accès hors ligne PWA
 if ('serviceWorker' in navigator) {
   const swCode = `
     const CACHE_NAME = 'comptes-v1';
