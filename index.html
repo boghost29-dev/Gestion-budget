@@ -6,7 +6,7 @@
 <title>Mes Comptes</title>
 
 <!-- Manifest WebApp directement intégré pour l'installation mobile -->
-<link rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogIk1lcyBDb21wdGVzIiwKICAic2hvcnRfbmFtZSI6ICJDb21wdGVzIiwKICAic3RhcnRfdXJsIjogIi4vIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjMDkwZDE2IiwKICAidGhlbWVfY29sb3IiOiAiIzA5MGQxNiIsCiAgImljb25zIjogWwogICAgewogICAgICAic3JjIjogImRhdGE6aW1hZ2Uvc3ZnK3htbCw8c3ZnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zycgdmlld0JveD0nMCAwIDEwMCAxMDAnPjxyZWN0IHdpZHRoPScxMDAnIGhlaWdodD0nMTAwJyByeD0nMjInIGZpbGw9JyUwOTBkMTYnLz48cGF0aCBkPSdNNTAgMTUgTDE1IDQ1IEwyNSA0NSBMMjUgODIgTDc1IDgy LDc1IDQ1IEw4NSA0NSBaJyBmaWxsPSclMjNmZmZmZmYnLz48dGV4dCB4PSc1MCUnIHk9JzY3JScgZm9udC1zaXplPSczMicgZm9udC13ZWlnaHQ9JzkwMCcgZm9udC1mYW1pbHk9J3NhbnMtc2VyaWYnIHRleHQtYW5jaG9yPSdtaWRkbGUnIGZpbGw9JyUwOTBkMTYnPsK1PC90ZXh0Pjwvc3ZnPiIsCiAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInR5cGUiOiAiaW1hZ2Uvc3ZnK3htbCIsCiAgICAgICJwdXJwb3NlIjogImFueSBtYXJrYWJsZSIKICAgIH0KICBdCn0=">
+<link rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogIk1lcyBDb21wdGVzIiwKICAic3RhcnRfdXJsIjogIi4vIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjMDkwZDE2IiwKICAidGhlbWVfY29sb3IiOiAiIzA5MGQxNiIsCiAgImljb25zIjogWwogICAgewogICAgICAic3JjIjogImRhdGE6aW1hZ2Uvc3ZnK3htbCw8c3ZnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zycgdmlld0JveD0nMCAwIDEwMCAxMDAnPjxyZWN0IHdpZHRoPScxMDAnIGhlaWdodD0nMTAwJyByeD0nMjInIGZpbGw9JyUwOTBkMTYnLz48cGF0aCBkPSdNNTAgMTUgTDE1IDQ1IEwyNSA0NSBMMjUgODIgTDc1IDgy LDc1IDQ1IEw4NSA0NSBaJyBmaWxsPSclMjNmZmZmZmYnLz48dGV4dCB4PSc1MCUnIHk9JzY3JScgZm9udC1zaXplPSczMicgZm9udC13ZWlnaHQ9JzkwMCcgZm9udC1mYW1pbHk9J3NhbnMtc2VyaWYnIHRleHQtYW5jaG9yPSdtaWRkbGUnIGZpbGw9JyUwOTBkMTYnPsK1PC90ZXh0Pjwvc3ZnPiIsCiAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInR5cGUiOiAiaW1hZ2Uvc3ZnK3htbCIsCiAgICAgICJwdXJwb3NlIjogImFueSBtYXJrYWJsZSIKICAgIH0KICBdCn0=">
 
 <!-- Icône SVG pour Favoris, Onglets et Écran d'accueil -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23090d16'/><path d='M50 15 L15 45 L25 45 L25 82 L75 82 L75 45 L85 45 Z' fill='%23ffffff'/><text x='50%' y='67%' font-size='32' font-weight='900' font-family='sans-serif' text-anchor='middle' fill='%23090d16'>€</text></svg>">
@@ -359,7 +359,7 @@ function projections(uid, jusqua){
   const n = new Date(), r = [];
   for (let i = 1; i <= 2; i++){
     const ym = iso(new Date(n.getFullYear(), n.getMonth()+i, 1)).slice(0,7), d = ym+'-12';
-    if (d > jusqua || S.ops.some(o => o.reg === ym)) continue;
+    if (d > hingga || S.ops.some(o => o.reg === ym)) continue;
     const c = commun(ym); if (Math.abs(c.e) < .005) continue;
     const [du, cr] = c.e > 0 ? [1, 0] : [0, 1], a = Math.abs(c.e), debiteur = S.users[du].id === uid;
     if (!debiteur && S.users[cr].id !== uid) continue;
@@ -510,12 +510,20 @@ function detail(){
   const vis = lignes.filter(ok).reverse();
   $('d-list').innerHTML = vis.map(o => ligne(o.x, F.roll ? o.s : undefined)).join('') || '<p class="mu" style="text-align:center;padding:10px">Aucune opération correspondante</p>';
   
-  // Affichage des références fixes avec le bouton 🔄 de resynchronisation complète
+  // Affichage des références fixes avec les badges d'état (retiré / modifié)
   $('regles').innerHTML = S.regles.map((g, i) => g.u !== U ? '' : `<div class="op-item" onclick="ouvrirTpl(${i})">
     <div class="op-info">
       <div class="op-label">${esc(g.l)} ${g.c?'🤝':''}</div>
       <div class="op-sub">Chaque mois le ${g.jour}</div>
-      ${Object.keys(g.exc||{}).filter(k => g.exc[k].skip).map(k => `<div class="op-sub">retiré : ${k.slice(5)}/${k.slice(0,4)} <u onclick="event.stopPropagation();delete S.regles[${i}].exc['${k}'];sauver();rendre()">annuler</u></div>`).join('')}
+      ${Object.keys(g.exc||{}).map(k => {
+        const ex = g.exc[k];
+        if (ex.skip) {
+          return `<div class="op-sub">retiré : ${k.slice(5)}/${k.slice(0,4)} <u onclick="event.stopPropagation();delete S.regles[${i}].exc['${k}'];sauver();rendre()">annuler</u></div>`;
+        } else if (ex && (ex.m !== undefined || ex.d !== undefined || ex.c !== undefined)) {
+          return `<div class="op-sub" style="color:var(--warning)">modifié : ${k.slice(5)}/${k.slice(0,4)} <u onclick="event.stopPropagation();delete S.regles[${i}].exc['${k}'];sauver();rendre()">annuler</u></div>`;
+        }
+        return '';
+      }).join('')}
     </div>
     <div class="op-right">
       <div class="op-amount ${g.m<0?'red':'green'}">${g.m>0?'+':''}${eur(g.m)}</div>
@@ -530,7 +538,7 @@ function refreshSingleTemplate(i) {
   const g = S.regles[i];
   if (!g) return;
 
-  // Purge complète de toutes les annulations/modifications ponctuelles
+  // Purge complète et effective de l'objet d'exceptions
   g.exc = {};
 
   sauver();
@@ -567,34 +575,55 @@ function ouvrir(id){
   $('f-d').value = x ? x.d : today(); 
   $('f-r').checked = false; 
   
-  // On autorise la modification de la charge commune et de la date même pour les règles mensuelles (pour ce mois-ci)
+  // Autoriser la modification de type, répartition et libellé/date
   $('f-t').disabled = men;
   $('f-c').disabled = false;
   $('f-l').disabled = false;
   
   $('f-rbox').classList.toggle('hidden', !!ED);
-  $('f-note').textContent = men ? 'Règle mensuelle : l’ajustement s’appliquera exceptionnellement à ce mois-ci.' : '';
+  $('f-note').textContent = men ? 'Règle mensuelle : l’ajustement (montant, date, répartition) s’appliquera exceptionnellement à ce mois-ci.' : '';
   ouvrirM('m-op');
 }
 
 function enregistrer(){
-  const l = $('f-l').value.trim(), v = Math.abs(parseFloat($('f-m').value)), d =$('f-d').value, sg = +$('f-t').value, c =$('f-c').value === '1';
-  if (!l || isNaN(v) || !d) return msg('Libellé, montant et date sont requis.');
+  const l = $('f-l').value.trim(), v = Math.abs(parseFloat($('f-m').value)), d = $('f-d').value, sg = +$('f-t').value, c = $('f-c').value === '1';
+  const valNum = parseFloat($('f-m').value);
+  if (!l || isNaN(valNum) || !d) return msg('Libellé, montant et date sont requis.');
+  
   if (ED[0] === 'r'){
-    const [r, k] = ED.slice(1).split('|'), g = S.regles[+r];
+    const parts = ED.slice(1).split('|');
+    const rIdx = +parts[0];
+    const k = parts[1]; // Mois concerné (ex: 2026-10)
+    const g = S.regles[rIdx];
+    
     g.exc = g.exc || {}; 
-    g.exc[k] = { m: (g.m < 0 ? -1 : 1) * v, d: d, c: c };
-  } else if (ED[0] === 'o') Object.assign(S.ops[+ED.slice(1)], {l, m:sg*v, d, c});
-  else if ($('f-r').checked){
-    S.regles.push({u:U, l, m:sg*v, c, jour:+d.slice(8), debut:d});
-  } else S.ops.push({u:U, l, m:sg*v, d, c});
+    g.exc[k] = { 
+      m: (g.m < 0 ? -1 : 1) * Math.abs(valNum), 
+      d: d, 
+      c: c 
+    };
+  } else if (ED[0] === 'o') {
+    Object.assign(S.ops[+ED.slice(1)], {l, m: sg * Math.abs(valNum), d, c});
+  } else if ($('f-r').checked){
+    S.regles.push({u:U, l, m: sg * Math.abs(valNum), c, jour:+d.slice(8), debut:d});
+  } else {
+    S.ops.push({u:U, l, m: sg * Math.abs(valNum), d, c});
+  }
   sauver(); fermer('m-op'); rendre();
 }
 
 function supprimer(i){ S.ops.splice(i, 1); sauver(); rendre(); }
 function retirer(id){
-  const [r, k] = id.slice(1).split('|'), g = S.regles[+r];
-  g.exc = g.exc || {}; g.exc[k] = {skip:true}; sauver(); rendre(); msg('Échéance retirée.');
+  const parts = id.slice(1).split('|');
+  const rIdx = +parts[0];
+  const k = parts[1]; // Mois concerné
+  const g = S.regles[rIdx];
+  
+  g.exc = g.exc || {}; 
+  g.exc[k] = { skip: true }; 
+  sauver(); 
+  rendre(); 
+  msg('Échéance retirée.');
 }
 
 function ouvrirTpl(i){
