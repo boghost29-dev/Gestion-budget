@@ -6,7 +6,7 @@
 <title>Mes Comptes</title>
 
 <!-- Manifest WebApp directement intégré pour l'installation mobile -->
-<link rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogIk1lcyBDb21wdGVzIiwKICAic3RhcnRfdXJsIjogIi4vIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjMDkwZDE2IiwKICAidGhlbWVfY29sb3IiOiAiIzA5MGQxNiIsCiAgImljb25zIjogWwogICAgewogICAgICAic3JjIjogImRhdGE6aW1hZ2Uvc3ZnK3htbCw8c3ZnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zycgdmlld0JveD0nMCAwIDEwMCAxMDAnPjxyZWN0IHdpZHRoPScxMDAnIGhlaWdodD0nMTAwJyByeD0nMjInIGZpbGw9JyUwOTBkMTYnLz48cGF0aCBkPSdNNTAgMTUgTDE1IDQ1IEwyNSA0NSBMMjUgODIgTDc1IDgy LDc1IDQ1IEw4NSA0NSBaJyBmaWxsPSclMjNmZmZmZmYnLz48dGV4dCB4PSc1MCUnIHk9JzY3JScgZm9udC1zaXplPSczMicgZm9udC13ZWlnaHQ9JzkwMCcgZm9udC1mYW1pbHk9J3NhbnMtc2VyaWYnIHRleHQtYW5jaG9yPSdtaWRkbGUnIGZpbGw9JyUwOTBkMTYnPsK1PC90ZXh0Pjwvc3ZnPiIsCiAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInR5cGUiOiAiaW1hZ2Uvc3ZnK3htbCIsCiAgICAgICJwdXJwb3NlIjogImFueSBtYXJrYWJsZSIKICAgIH0KICBdCn0=">
+<link rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogIk1lcyBDb21wdGVzIiwKICAic2hvcnRfbmFtZSI6ICJDb21wdGVzIiwKICAic3RhcnRfdXJsIjogIi4vIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjMDkwZDE2IiwKICAidGhlbWVfY29sb3IiOiAiIzA5MGQxNiIsCiAgImljb25zIjogWwogICAgewogICAgICAic3JjIjogImRhdGE6aW1hZ2Uvc3ZnK3htbCw8c3ZnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zycgdmlld0JveD0nMCAwIDEwMCAxMDAnPjxyZWN0IHdpZHRoPScxMDAnIGhlaWdodD0nMTAwJyByeD0nMjInIGZpbGw9JyUwOTBkMTYnLz48cGF0aCBkPSdNNTAgMTUgTDE1IDQ1IEwyNSA0NSBMMjUgODIgTDc1IDgy LDc1IDQ1IEw4NSA0NSBaJyBmaWxsPSclMjNmZmZmZmYnLz48dGV4dCB4PSc1MCUnIHk9JzY3JScgZm9udC1zaXplPSczMicgZm9udC13ZWlnaHQ9JzkwMCcgZm9udC1mYW1pbHk9J3NhbnMtc2VyaWYnIHRleHQtYW5jaG9yPSdtaWRkbGUnIGZpbGw9JyUwOTBkMTYnPsK1PC90ZXh0Pjwvc3ZnPiIsCiAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInR5cGUiOiAiaW1hZ2Uvc3ZnK3htbCIsCiAgICAgICJwdXJwb3NlIjogImFueSBtYXJrYWJsZSIKICAgIH0KICBdCn0=">
 
 <!-- Icône SVG pour Favoris, Onglets et Écran d'accueil -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23090d16'/><path d='M50 15 L15 45 L25 45 L25 82 L75 82 L75 45 L85 45 Z' fill='%23ffffff'/><text x='50%' y='67%' font-size='32' font-weight='900' font-family='sans-serif' text-anchor='middle' fill='%23090d16'>€</text></svg>">
@@ -82,12 +82,6 @@ nav.ios-nav{position:absolute;bottom:0;left:0;width:100%;background:rgba(15,23,4
 label{font-size:.78rem;color:var(--text-muted);display:flex;flex-direction:column;gap:4px;font-weight:500}
 label.row{flex-direction:row;align-items:center;gap:8px;color:var(--text)}
 input,select,textarea{background:rgba(15,23,42,.9);border:1px solid var(--border);border-radius:12px;padding:11px;color:var(--text);font-size:.92rem;width:100%;outline:none}
-
-/* Rendre le calendrier et le sélecteur de date/mois nativement blancs */
-input[type="date"], input[type="month"] {
-  color-scheme: dark;
-}
-
 input[type=checkbox]{width:16px;height:16px}
 details{background:rgba(15,23,42,.2);border:1px solid var(--border);border-radius:12px;padding:10px 14px;margin-bottom:8px}
 summary{font-weight:600;cursor:pointer;color:var(--text);font-size:.85rem;outline:none}
@@ -340,8 +334,7 @@ function brut(uid, jusqua){
       const k = d.slice(0,7), e = g.exc && g.exc[k];
       if (e && e.skip) continue;
       const dd = e && e.d ? e.d : d, mm = e === undefined ? g.m : (typeof e === 'object' ? e.m : e);
-      const cc = (e && e.c !== undefined) ? e.c : g.c;
-      if (dd <= jusqua) r.push({u:uid, d:dd, l:g.l, m:mm, c:cc, g, k});
+      if (dd <= jusqua) r.push({u:uid, d:dd, l:g.l, m:mm, c:g.c, g, k});
     }
   }
   return r;
@@ -510,7 +503,7 @@ function detail(){
   const vis = lignes.filter(ok).reverse();
   $('d-list').innerHTML = vis.map(o => ligne(o.x, F.roll ? o.s : undefined)).join('') || '<p class="mu" style="text-align:center;padding:10px">Aucune opération correspondante</p>';
   
-  // Affichage des références fixes avec le bouton 🔄 de resynchronisation complète
+  // Affichage des références fixes avec le bouton 🔄 de resynchronisation M+1/M+2
   $('regles').innerHTML = S.regles.map((g, i) => g.u !== U ? '' : `<div class="op-item" onclick="ouvrirTpl(${i})">
     <div class="op-info">
       <div class="op-label">${esc(g.l)} ${g.c?'🤝':''}</div>
@@ -519,23 +512,32 @@ function detail(){
     </div>
     <div class="op-right">
       <div class="op-amount ${g.m<0?'red':'green'}">${g.m>0?'+':''}${eur(g.m)}</div>
-      <button class="del-btn" style="background:rgba(99,102,241,0.25);color:#818cf8;margin-right:4px;" title="Réinitialiser et rétablir toutes les échéances" onclick="event.stopPropagation();refreshSingleTemplate(${i})">🔄</button>
+      <button class="del-btn" style="background:rgba(99,102,241,0.25);color:#818cf8;margin-right:4px;" title="Réinitialiser et synchroniser sur M+1 et M+2" onclick="event.stopPropagation();refreshSingleTemplate(${i})">🔄</button>
       <button class="del-btn" onclick="event.stopPropagation();S.regles.splice(${i},1);sauver();rendre()">✕</button>
     </div>
   </div>`).join('') || '<p class="mu" style="text-align:center">Aucune référence fixe.</p>';
 }
 
-// Réinitialisation globale des exceptions pour faire réapparaître l'opération sur TOUS les mois
 function refreshSingleTemplate(i) {
   const g = S.regles[i];
   if (!g) return;
 
-  // Purge complète et effective de l'objet d'exceptions
-  g.exc = {};
+  const n = new Date();
+  let countUpdated = 0;
+
+  for (let mOffset = 1; mOffset <= 2; mOffset++) {
+    const targetDate = new Date(n.getFullYear(), n.getMonth() + mOffset, 1);
+    const ym = iso(targetDate).slice(0, 7);
+
+    if (g.exc && g.exc[ym]) {
+      delete g.exc[ym];
+      countUpdated++;
+    }
+  }
 
   sauver();
   rendre();
-  msg(`Réinitialisation effectuée pour "${g.l}" ! Toutes les échéances sont rétablies.`);
+  msg(`Synchronisation de "${g.l}" effectuée pour M+1 et M+2 !`);
 }
 
 function decaler(n){
@@ -562,60 +564,33 @@ function ouvrir(id){
   $('m-t').textContent = x ? 'Modifier l’opération' : 'Nouvelle opération';
   $('f-l').value = x ? x.l : ''; 
   $('f-m').value = x ? Math.abs(x.m) : ''; 
-  $('f-t').value = x && x.m > 0 ? '1' : '-1';
-  $('f-c').value = x && x.c ? '1' : '0'; 
+  $('f-t').value = x && x.m > 0 ? '1' : '-1';$('f-c').value = x && x.c ? '1' : '0'; 
   $('f-d').value = x ? x.d : today(); 
   $('f-r').checked = false; 
   
-  // Autoriser la modification de type, répartition et libellé/date
-  $('f-t').disabled = men;
-  $('f-c').disabled = false;
-  $('f-l').disabled = false;
+  ['f-t','f-c'].forEach(i => $(i).disabled = men);$('f-l').disabled = false;
   
-  $('f-rbox').classList.toggle('hidden', !!ED);
-  $('f-note').textContent = men ? 'Règle mensuelle : l’ajustement (montant, date, répartition) s’appliquera exceptionnellement à ce mois-ci.' : '';
+  $('f-rbox').classList.toggle('hidden', !!ED);$('f-note').textContent = men ? 'Règle mensuelle : l’ajustement de montant ne s’appliquera qu’à ce mois-ci.' : '';
   ouvrirM('m-op');
 }
 
 function enregistrer(){
-  const l = $('f-l').value.trim(), v = Math.abs(parseFloat($('f-m'.replace('','')))), d = $('f-d').value, sg = +$('f-t').value, c = $('f-c').value === '1';
-  const valNum = parseFloat($('f-m').value);
-  if (!l || isNaN(valNum) || !d) return msg('Libellé, montant et date sont requis.');
-  
+  const l = $('f-l').value.trim(), v = Math.abs(parseFloat($('f-m').value)), d =$('f-d').value, sg = +$('f-t').value, c =$('f-c').value === '1';
+  if (!l || isNaN(v) || !d) return msg('Libellé, montant et date sont requis.');
   if (ED[0] === 'r'){
-    const parts = ED.slice(1).split('|');
-    const rIdx = +parts[0];
-    const k = parts[1]; // Mois concerné (ex: 2026-10)
-    const g = S.regles[rIdx];
-    
-    g.exc = g.exc || {}; 
-    g.exc[k] = { 
-      m: (g.m < 0 ? -1 : 1) * Math.abs(valNum), 
-      d: d, 
-      c: c 
-    };
-  } else if (ED[0] === 'o') {
-    Object.assign(S.ops[+ED.slice(1)], {l, m: sg * Math.abs(valNum), d, c});
-  } else if ($('f-r').checked){
-    S.regles.push({u:U, l, m: sg * Math.abs(valNum), c, jour:+d.slice(8), debut:d});
-  } else {
-    S.ops.push({u:U, l, m: sg * Math.abs(valNum), d, c});
-  }
+    const [r, k] = ED.slice(1).split('|'), g = S.regles[+r];
+    g.exc = g.exc || {}; g.exc[k] = {m:(g.m < 0 ? -1 : 1) * v, d};
+  } else if (ED[0] === 'o') Object.assign(S.ops[+ED.slice(1)], {l, m:sg*v, d, c});
+  else if ($('f-r').checked){
+    S.regles.push({u:U, l, m:sg*v, c, jour:+d.slice(8), debut:d});
+  } else S.ops.push({u:U, l, m:sg*v, d, c});
   sauver(); fermer('m-op'); rendre();
 }
 
 function supprimer(i){ S.ops.splice(i, 1); sauver(); rendre(); }
 function retirer(id){
-  const parts = id.slice(1).split('|');
-  const rIdx = +parts[0];
-  const k = parts[1]; // Mois concerné
-  const g = S.regles[rIdx];
-  
-  g.exc = g.exc || {}; 
-  g.exc[k] = { skip: true }; 
-  sauver(); 
-  rendre(); 
-  msg('Échéance retirée.');
+  const [r, k] = id.slice(1).split('|'), g = S.regles[+r];
+  g.exc = g.exc || {}; g.exc[k] = {skip:true}; sauver(); rendre(); msg('Échéance retirée.');
 }
 
 function ouvrirTpl(i){
