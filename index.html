@@ -6,7 +6,7 @@
 <title>Mes Comptes</title>
 
 <!-- Manifest WebApp directement intégré pour l'installation mobile -->
-<link rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogIk1lcyBDb21wdGVzIiwKICAic2hvcnRfbmFtZSI6ICJDb21wdGVzIiwKICAic3RhcnRfdXJsIjogIi4vIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjMDkwZDE2IiwKICAidGhlbWVfY29sb3IiOiAiIzA5MGQxNiIsCiAgImljb25zIjogWwogICAgewogICAgICAic3JjIjogImRhdGE6aW1hZ2Uvc3ZnK3htbCw8c3ZnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zycgdmlld0JveD0nMCAw IDEwMCAxMDAnPjxyZWN0IHdpZHRoPScxMDAnIGhlaWdodD0nMTAwJyByeD0nMjInIGZpbGw9JyUwOTBkMTYnLz48cGF0aCBkPSdNNTAgMTUgTDE1IDQ1IEwyNSA0NSBMMjUgODIgTDc1IDgy LDc1IDQ1IEw4NSA0NSBaJyBmaWxsPSclMjNmZmZmZmYnLz48dGV4dCB4PSc1MCUnIHk9JzY3JScgZm9udC1zaXplPSczMicgZm9udC13ZWlnaHQ9JzkwMCcgZm9udC1mYW1pbHk9J3NhbnMtc2VyaWYnIHRleHQtYW5jaG9yPSdtaWRkbGUnIGZpbGw9JyUwOTBkMTYnPsK1PC90ZXh0Pjwvc3ZnPiIsCiAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInR5cGUiOiAiaW1hZ2Uvc3ZnK3htbCIsCiAgICAgICJwdXJwb3NlIjogImFueSBtYXJrYWJsZSIKICAgIH0KICBdCn0=">
+<link rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogIk1lcyBDb21wdGVzIiwKICAic2hvcnRfbmFtZSI6ICJDb21wdGVzIiwKICAic3RhcnRfdXJsIjogIi4vIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjMDkwZDE2IiwKICAidGhlbWVfY29sb3IiOiAiIzA5MGQxNiIsCiAgImljb25zIjogWwogICAgewogICAgICAic3JjIjogImRhdGE6aW1hZ2Uvc3ZnK3htbCw8c3ZnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zycgdmlld0JveD0nMCAwIDEwMCAxMDAnPjxyZWN0IHdpZHRoPScxMDAnIGhlaWdodD0nMTAwJyByeD0nMjInIGZpbGw9JyUwOTBkMTYnLz48cGF0aCBkPSdNNTAgMTUgTDE1IDQ1IEwyNSA0NSBMMjUgODIgTDc1IDgy LDc1IDQ1IEw4NSA0NSBaJyBmaWxsPSclMjNmZmZmZmYnLz48dGV4dCB4PSc1MCUnIHk9JzY3JScgZm9udC1zaXplPSczMicgZm9udC13ZWlnaHQ9JzkwMCcgZm9udC1mYW1pbHk9J3NhbnMtc2VyaWYnIHRleHQtYW5jaG9yPSdtaWRkbGUnIGZpbGw9JyUwOTBkMTYnPsK1PC90ZXh0Pjwvc3ZnPiIsCiAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInR5cGUiOiAiaW1hZ2Uvc3ZnK3htbCIsCiAgICAgICJwdXJwb3NlIjogImFueSBtYXJrYWJsZSIKICAgIH0KICBdCn0=">
 
 <!-- Icône SVG pour Favoris, Onglets et Écran d'accueil -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23090d16'/><path d='M50 15 L15 45 L25 45 L25 82 L75 82 L75 45 L85 45 Z' fill='%23ffffff'/><text x='50%' y='67%' font-size='32' font-weight='900' font-family='sans-serif' text-anchor='middle' fill='%23090d16'>€</text></svg>">
@@ -97,7 +97,7 @@ summary{font-weight:600;cursor:pointer;color:var(--text);font-size:.85rem;outlin
 </head>
 <body>
 <div class="app-frame">
- <div id="net-status">⚠️ Mode hors ligne - Vos modifications sont enregistrées localement</div>
+ <div id="net-status">⚠️ Mode hors ligne - Vos données sont sauvegardées localement</div>
  <header>
   <div class="app-title">Mes Comptes</div>
   <div class="user-selector" id="seg"></div>
@@ -340,7 +340,8 @@ function brut(uid, jusqua){
       const k = d.slice(0,7), e = g.exc && g.exc[k];
       if (e && e.skip) continue;
       const dd = e && e.d ? e.d : d, mm = e === undefined ? g.m : (typeof e === 'object' ? e.m : e);
-      if (dd <= jusqua) r.push({u:uid, d:dd, l:g.l, m:mm, c:g.c, g, k});
+      const cc = (e && e.c !== undefined) ? e.c : g.c;
+      if (dd <= jusqua) r.push({u:uid, d:dd, l:g.l, m:mm, c:cc, g, k});
     }
   }
   return r;
@@ -561,13 +562,18 @@ function ouvrir(id){
   $('m-t').textContent = x ? 'Modifier l’opération' : 'Nouvelle opération';
   $('f-l').value = x ? x.l : ''; 
   $('f-m').value = x ? Math.abs(x.m) : ''; 
-  $('f-t').value = x && x.m > 0 ? '1' : '-1';$('f-c').value = x && x.c ? '1' : '0'; 
+  $('f-t').value = x && x.m > 0 ? '1' : '-1';
+  $('f-c').value = x && x.c ? '1' : '0'; 
   $('f-d').value = x ? x.d : today(); 
   $('f-r').checked = false; 
   
-  ['f-t','f-c'].forEach(i => $(i).disabled = men);$('f-l').disabled = false;
+  // On autorise la modification de la charge commune et de la date même pour les règles mensuelles (pour ce mois-ci)
+  $('f-t').disabled = men;
+  $('f-c').disabled = false;
+  $('f-l').disabled = false;
   
-  $('f-rbox').classList.toggle('hidden', !!ED);$('f-note').textContent = men ? 'Règle mensuelle : l’ajustement de montant ne s’appliquera qu’à ce mois-ci.' : '';
+  $('f-rbox').classList.toggle('hidden', !!ED);
+  $('f-note').textContent = men ? 'Règle mensuelle : l’ajustement s’appliquera exceptionnellement à ce mois-ci.' : '';
   ouvrirM('m-op');
 }
 
@@ -576,7 +582,8 @@ function enregistrer(){
   if (!l || isNaN(v) || !d) return msg('Libellé, montant et date sont requis.');
   if (ED[0] === 'r'){
     const [r, k] = ED.slice(1).split('|'), g = S.regles[+r];
-    g.exc = g.exc || {}; g.exc[k] = {m:(g.m < 0 ? -1 : 1) * v, d};
+    g.exc = g.exc || {}; 
+    g.exc[k] = { m: (g.m < 0 ? -1 : 1) * v, d: d, c: c };
   } else if (ED[0] === 'o') Object.assign(S.ops[+ED.slice(1)], {l, m:sg*v, d, c});
   else if ($('f-r').checked){
     S.regles.push({u:U, l, m:sg*v, c, jour:+d.slice(8), debut:d});
