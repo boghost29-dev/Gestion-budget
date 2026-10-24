@@ -217,6 +217,7 @@ const vide = () => ({users:[{id:'a',nom:'Kévin',init:0},{id:'b',nom:'Prescillia
 let S = vide(), U = 'a', T = 'synth', M = '', ED = '', ET = -1, RM = '', ROWS = {};
 const F = {deb:1, cre:1, men:1, pon:1, com:1, roll:1, eq:0};
 let isAdmin = false;
+let syncEnAttente = false; // Drapeau pour savoir si des modifs hors-ligne doivent être envoyées
 
 const $ = id => document.getElementById(id);
 const p2 = n => String(n).padStart(2,'0');
@@ -240,7 +241,7 @@ function msg(t){
   msg.h = setTimeout(() => e.style.display = 'none', 4500);
 }
 
-// --- GESTION DU STATUT RÉSEAU (HORS LIGNE / EN LIGNE) ---
+// --- GESTION DU STATUT RÉSEAU ET SYNCHRO AUTOMATIQUE AU RETOUR ---
 function majStatutReseau(enLigne) {
   const banner = $('net-status');
   if (!banner) return;
@@ -248,6 +249,11 @@ function majStatutReseau(enLigne) {
     banner.textContent = "✓ Connecté - Synchronisé";
     banner.className = "show online";
     setTimeout(() => banner.classList.remove('show'), 3000);
+    
+    // Si des modifications ont été faites hors-ligne, on les pousse vers le cloud !
+    if (syncEnAttente) {
+      sauverCloudForce();
+    }
   } else {
     banner.textContent = "⚠️ Mode hors ligne - Vos modifications sont enregistrées localement";
     banner.className = "show";
@@ -259,6 +265,11 @@ window.addEventListener('offline', () => majStatutReseau(false));
 
 // --- AUTHENTIFICATION ---
 async function verifierSession() {
+  const localBackup = localStorage.getItem('mon_budget_local_data');
+  if (localBackup) { 
+    try { S = JSON.parse(localBackup); } catch(e){} 
+  }
+  
   const { data: { session } } = await supabaseClient.auth.getSession();
   if (session) {
     $('auth-screen').classList.add('hidden');
@@ -295,14 +306,9 @@ async function seDeconnecter() {
   location.reload();
 }
 
-// --- CLOUD & SYNCHRO AUTOMATIQUE (TOUTES LES 5 SEC) ---
+// --- CLOUD & SYNCHRO AUTOMATIQUE ---
 async function chargerCloud(silencieux = false){
-  const localBackup = localStorage.getItem('mon_budget_local_data');
-  if (localBackup && (!S || !S.ops || S.ops.length === 0)) { 
-    try { S = JSON.parse(localBackup); } catch(e){} 
-  }
-
-  if (navigator.onLine) {
+  if (navigator.onLine && !syncEnAttente) {
     try {
       const { data: { session } } = await supabaseClient.auth.getSession();
       if (!session) return;
@@ -341,58 +347,67 @@ async function chargerCloud(silencieux = false){
 }
 
 async function sauver(){
+  // Toujours sauvegarder en local immédiatement (garantie hors-ligne)
   localStorage.setItem('mon_budget_local_data', JSON.stringify(S));
+  
   if (navigator.onLine) {
-    try {
-      const { data: { session } } = await supabaseClient.auth.getSession();
-      if (!session) return;
-      const token = session.access_token;
-      const userId = session.user.id;
+    await sauverCloudForce();
+  } else {
+    syncEnAttente = true; // Marque qu'il y a des données en attente d'envoi
+    majStatutReseau(false);
+  }
+}
 
-      const checkRes = await fetch(`${SB_URL}/rest/v1/app_data?user_id=eq.${userId}`, {
+async function sauverCloudForce(){
+  try {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (!session) return;
+    const token = session.access_token;
+    const userId = session.user.id;
+
+    const checkRes = await fetch(`${SB_URL}/rest/v1/app_data?user_id=eq.${userId}`, {
+      headers: { 
+        'apikey': SB_KEY, 
+        'Authorization': `Bearer ${token}` 
+      }
+    });
+    const existing = await checkRes.json();
+
+    if (existing && existing.length > 0) {
+      await fetch(`${SB_URL}/rest/v1/app_data?user_id=eq.${userId}`, {
+        method: 'PATCH',
         headers: { 
           'apikey': SB_KEY, 
-          'Authorization': `Bearer ${token}` 
-        }
+          'Authorization': `Bearer ${token}`, 
+          'Content-Type': 'application/json', 
+          'Prefer': 'return=minimal' 
+        },
+        body: JSON.stringify({ payload: S })
       });
-      const existing = await checkRes.json();
-
-      if (existing && existing.length > 0) {
-        await fetch(`${SB_URL}/rest/v1/app_data?user_id=eq.${userId}`, {
-          method: 'PATCH',
-          headers: { 
-            'apikey': SB_KEY, 
-            'Authorization': `Bearer ${token}`, 
-            'Content-Type': 'application/json', 
-            'Prefer': 'return=minimal' 
-          },
-          body: JSON.stringify({ payload: S })
-        });
-      } else {
-        await fetch(`${SB_URL}/rest/v1/app_data`, {
-          method: 'POST',
-          headers: { 
-            'apikey': SB_KEY, 
-            'Authorization': `Bearer ${token}`, 
-            'Content-Type': 'application/json', 
-            'Prefer': 'return=minimal' 
-          },
-          body: JSON.stringify({ user_id: userId, payload: S })
-        });
-      }
-      majStatutReseau(true);
-    } catch(e){ 
-      console.error('Erreur sauvegarde cloud', e); 
-      majStatutReseau(false);
+    } else {
+      await fetch(`${SB_URL}/rest/v1/app_data`, {
+        method: 'POST',
+        headers: { 
+          'apikey': SB_KEY, 
+          'Authorization': `Bearer ${token}`, 
+          'Content-Type': 'application/json', 
+          'Prefer': 'return=minimal' 
+        },
+        body: JSON.stringify({ user_id: userId, payload: S })
+      });
     }
-  } else {
+    syncEnAttente = false;
+    majStatutReseau(true);
+  } catch(e){ 
+    console.error('Erreur sauvegarde cloud', e);
+    syncEnAttente = true;
     majStatutReseau(false);
   }
 }
 
 // Polling automatique toutes les 5 secondes en arrière-plan
 setInterval(() => {
-  if (navigator.onLine && !document.hidden) {
+  if (navigator.onLine && !document.hidden && !syncEnAttente) {
     chargerCloud(true);
   }
 }, 5000);
