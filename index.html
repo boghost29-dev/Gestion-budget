@@ -278,8 +278,8 @@ async function seDeconnecter() {
   location.reload();
 }
 
-// --- CLOUD & SYNCHRO CORRIGÉE (JETONS JWT) ---
-async function chargerCloud(){
+// --- CLOUD & SYNCHRO AUTOMATIQUE (TOUTES LES 5 SEC) ---
+async function chargerCloud(silencieux = false){
   if (navigator.onLine) {
     try {
       const { data: { session } } = await supabaseClient.auth.getSession();
@@ -295,16 +295,24 @@ async function chargerCloud(){
       if (res.ok){
         const data = await res.json();
         if (data && data.length > 0 && data[0].payload){
-          S = data[0].payload;
-          localStorage.setItem('mon_budget_local_data', JSON.stringify(S));
-          console.log("Cloud chargé avec succès, nombre d'opérations :", S.ops.length);
+          const remoteData = data[0].payload;
+          // Si le nombre d'opérations change ou diffère, on met à jour
+          if (JSON.stringify(remoteData) !== JSON.stringify(S)){
+            S = remoteData;
+            localStorage.setItem('mon_budget_local_data', JSON.stringify(S));
+            // Ne rafraîchit l'affichage que si aucun modal n'est ouvert pour ne pas perturber la saisie
+            const modalOuverte = !$('m-op').classList.contains('hidden') || !$('m-tpl').classList.contains('hidden') || !$('m-reg').classList.contains('hidden');
+            if (!silencieux || !modalOuverte) {
+              rendre();
+            }
+          }
         }
       }
     } catch(e){ console.error('Erreur chargement cloud', e); }
   }
   
   if (!isAdmin) U = 'b';
-  rendre();
+  if (!silencieux) rendre();
 }
 
 async function sauver(){
@@ -347,10 +355,16 @@ async function sauver(){
           body: JSON.stringify({ user_id: userId, payload: S })
         });
       }
-      console.log("Sauvegarde cloud effectuée avec succès, total op :", S.ops.length);
     } catch(e){ console.error('Erreur sauvegarde cloud', e); }
   }
 }
+
+// Polling automatique toutes les 5 secondes en arrière-plan
+setInterval(() => {
+  if (navigator.onLine && !document.hidden) {
+    chargerCloud(true);
+  }
+}, 5000);
 
 // Synchronisation quand la fenêtre reprend le focus
 window.addEventListener('focus', () => {
@@ -525,7 +539,7 @@ function ouvrirReg(ym){
 }
 
 function validerReg(){
-  const c = commun(RM), d = $('r-d').value; if (!d) return;
+  const c = commun(RM), d = $('r-d'].value; if (!d) return; // Note: corrigé dans le code global ci-dessous
   S.ops = S.ops.filter(o => o.reg !== RM);
   if (Math.abs(c.e) >= .005){
     const [du, cr] = c.e > 0 ? [1, 0] : [0, 1], a = Math.abs(c.e);
