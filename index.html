@@ -278,15 +278,19 @@ async function seDeconnecter() {
   location.reload();
 }
 
-// --- CLOUD & SYNCHRO FORCÉE ---
+// --- CLOUD & SYNCHRO CORRIGÉE (JETONS JWT) ---
 async function chargerCloud(){
   if (navigator.onLine) {
     try {
-      const { data: { user } } = await supabaseClient.auth.getUser();
-      if (!user) return;
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (!session) return;
+      const token = session.access_token;
 
-      const res = await fetch(`${SB_URL}/rest/v1/app_data?user_id=eq.${user.id}`, {
-        headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
+      const res = await fetch(`${SB_URL}/rest/v1/app_data?user_id=eq.${session.user.id}`, {
+        headers: { 
+          'apikey': SB_KEY, 
+          'Authorization': `Bearer ${token}` 
+        }
       });
       if (res.ok){
         const data = await res.json();
@@ -307,33 +311,48 @@ async function sauver(){
   localStorage.setItem('mon_budget_local_data', JSON.stringify(S));
   if (navigator.onLine) {
     try {
-      const { data: { user } } = await supabaseClient.auth.getUser();
-      if (!user) return;
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (!session) return;
+      const token = session.access_token;
+      const userId = session.user.id;
 
-      const checkRes = await fetch(`${SB_URL}/rest/v1/app_data?user_id=eq.${user.id}`, {
-        headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
+      const checkRes = await fetch(`${SB_URL}/rest/v1/app_data?user_id=eq.${userId}`, {
+        headers: { 
+          'apikey': SB_KEY, 
+          'Authorization': `Bearer ${token}` 
+        }
       });
       const existing = await checkRes.json();
 
       if (existing && existing.length > 0) {
-        await fetch(`${SB_URL}/rest/v1/app_data?user_id=eq.${user.id}`, {
+        await fetch(`${SB_URL}/rest/v1/app_data?user_id=eq.${userId}`, {
           method: 'PATCH',
-          headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+          headers: { 
+            'apikey': SB_KEY, 
+            'Authorization': `Bearer ${token}`, 
+            'Content-Type': 'application/json', 
+            'Prefer': 'return=minimal' 
+          },
           body: JSON.stringify({ payload: S })
         });
       } else {
         await fetch(`${SB_URL}/rest/v1/app_data`, {
           method: 'POST',
-          headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
-          body: JSON.stringify({ user_id: user.id, payload: S })
+          headers: { 
+            'apikey': SB_KEY, 
+            'Authorization': `Bearer ${token}`, 
+            'Content-Type': 'application/json', 
+            'Prefer': 'return=minimal' 
+          },
+          body: JSON.stringify({ user_id: userId, payload: S })
         });
       }
-      console.log("Sauvegarde cloud effectuée, total op :", S.ops.length);
+      console.log("Sauvegarde cloud effectuée avec succès, total op :", S.ops.length);
     } catch(e){ console.error('Erreur sauvegarde cloud', e); }
   }
 }
 
-// Forcer le rechargement cloud dès que la page redevient active ou visible
+// Synchronisation quand la fenêtre reprend le focus
 window.addEventListener('focus', () => {
   verifierSession();
 });
