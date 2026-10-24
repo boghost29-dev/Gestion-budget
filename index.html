@@ -39,7 +39,7 @@ html,body{background:var(--bg);color:var(--text);width:100%;height:100%;overflow
 #net-status.online { background: #10b981; color: #fff; }
 
 header{padding:14px 20px;display:flex;justify-content:space-between;align-items:center;background:rgba(9,13,22,.9);border-bottom:1px solid var(--border);flex-shrink:0}
-.app-title{font-size:1.15rem;font-weight:800;background:linear-gradient(to right,#fff,#94a3b8);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.app-title{font-size:1.15rem;font-weight:800;background:linear-gradient(to right,#fff,#94a3b8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;cursor:pointer}
 .user-selector{display:flex;background:rgba(15,23,42,.9);padding:3px;border-radius:12px;border:1px solid var(--border)}
 .user-btn{padding:5px 12px;border-radius:9px;border:none;background:transparent;color:var(--text-muted);font-size:.78rem;font-weight:600;cursor:pointer}
 .user-btn.active{background:var(--accent-gradient);color:#fff}
@@ -106,7 +106,7 @@ summary{font-weight:600;cursor:pointer;color:var(--text);font-size:.85rem;outlin
 <div class="app-frame">
  <div id="net-status">⚠️ Mode hors ligne - Vos données sont sauvegardées localement</div>
  <header>
-  <div class="app-title" id="header-title">Mes Comptes</div>
+  <div class="app-title" id="header-title" onclick="gererClicTitre()">Mes Comptes</div>
   <div class="user-selector" id="seg"></div>
  </header>
  <main>
@@ -217,7 +217,8 @@ const vide = () => ({users:[{id:'a',nom:'Kévin',init:0},{id:'b',nom:'Prescillia
 let S = vide(), U = 'a', T = 'synth', M = '', ED = '', ET = -1, RM = '', ROWS = {};
 const F = {deb:1, cre:1, men:1, pon:1, com:1, roll:1, eq:0};
 let isAdmin = false;
-let syncEnAttente = false; // Drapeau pour savoir si des modifs hors-ligne doivent être envoyées
+let clickCount = 0;
+let clickTimer = null;
 
 const $ = id => document.getElementById(id);
 const p2 = n => String(n).padStart(2,'0');
@@ -241,7 +242,21 @@ function msg(t){
   msg.h = setTimeout(() => e.style.display = 'none', 4500);
 }
 
-// --- GESTION DU STATUT RÉSEAU ET SYNCHRO AUTOMATIQUE AU RETOUR ---
+// --- DÉBLOCAGE ADMIN (10 CLICS SUR LE TITRE) ---
+function gererClicTitre() {
+  clickCount++;
+  clearTimeout(clickTimer);
+  clickTimer = setTimeout(() => { clickCount = 0; }, 2000); // Réinitialise après 2 sec sans clic
+  
+  if (clickCount >= 10) {
+    clickCount = 0;
+    isAdmin = !isAdmin;
+    msg(isAdmin ? "Mode Admin activé (Multi-user)" : "Mode Admin désactivé");
+    rendre();
+  }
+}
+
+// --- GESTION DU STATUT RÉSEAU ET SYNCHRO HORS-LIGNE ---
 function majStatutReseau(enLigne) {
   const banner = $('net-status');
   if (!banner) return;
@@ -249,13 +264,9 @@ function majStatutReseau(enLigne) {
     banner.textContent = "✓ Connecté - Synchronisé";
     banner.className = "show online";
     setTimeout(() => banner.classList.remove('show'), 3000);
-    
-    // Si des modifications ont été faites hors-ligne, on les pousse vers le cloud !
-    if (syncEnAttente) {
-      sauverCloudForce();
-    }
+    sauverCloudForce(); // Pousse les modifs faites hors-ligne dès le retour du réseau
   } else {
-    banner.textContent = "⚠️ Mode hors ligne - Vos modifications sont enregistrées localement";
+    banner.textContent = "⚠️ Mode hors ligne - Sauvegarde locale active";
     banner.className = "show";
   }
 }
@@ -308,7 +319,7 @@ async function seDeconnecter() {
 
 // --- CLOUD & SYNCHRO AUTOMATIQUE ---
 async function chargerCloud(silencieux = false){
-  if (navigator.onLine && !syncEnAttente) {
+  if (navigator.onLine) {
     try {
       const { data: { session } } = await supabaseClient.auth.getSession();
       if (!session) return;
@@ -324,6 +335,7 @@ async function chargerCloud(silencieux = false){
         const data = await res.json();
         if (data && data.length > 0 && data[0].payload){
           const remoteData = data[0].payload;
+          // Si le cloud a des données différentes et plus récentes, on met à jour
           if (JSON.stringify(remoteData) !== JSON.stringify(S)){
             S = remoteData;
             localStorage.setItem('mon_budget_local_data', JSON.stringify(S));
@@ -347,13 +359,12 @@ async function chargerCloud(silencieux = false){
 }
 
 async function sauver(){
-  // Toujours sauvegarder en local immédiatement (garantie hors-ligne)
+  // Sauvegarde locale immédiate en priorité
   localStorage.setItem('mon_budget_local_data', JSON.stringify(S));
   
   if (navigator.onLine) {
     await sauverCloudForce();
   } else {
-    syncEnAttente = true; // Marque qu'il y a des données en attente d'envoi
     majStatutReseau(false);
   }
 }
@@ -396,18 +407,14 @@ async function sauverCloudForce(){
         body: JSON.stringify({ user_id: userId, payload: S })
       });
     }
-    syncEnAttente = false;
-    majStatutReseau(true);
   } catch(e){ 
     console.error('Erreur sauvegarde cloud', e);
-    syncEnAttente = true;
-    majStatutReseau(false);
   }
 }
 
 // Polling automatique toutes les 5 secondes en arrière-plan
 setInterval(() => {
-  if (navigator.onLine && !document.hidden && !syncEnAttente) {
+  if (navigator.onLine && !document.hidden) {
     chargerCloud(true);
   }
 }, 5000);
