@@ -170,7 +170,7 @@ summary{font-weight:600;cursor:pointer;color:var(--text);font-size:.85rem;outlin
  <nav class="ios-nav">
   <button class="nav-item active" id="nav-synth" onclick="T='synth';rendre()"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7zm4-3h2v10h-2zm4 6h2v4h-2z"/></svg>Synthèse</button>
   <button class="nav-item" id="nav-detail" onclick="T='detail';rendre()"><svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z"/></svg>Détail</button>
-  <button class="nav-item" id="nav-options" onclick="gererClicOptions()"><svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c-.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c-.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6-3.6z"/></svg>Options</button>
+  <button class="nav-item" id="nav-options" onclick="gererClicOptions()"><svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c-.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6-3.6z"/></svg>Options</button>
  </nav>
 </div>
 
@@ -222,6 +222,9 @@ const F = {deb:1, cre:1, men:1, pon:1, com:1, roll:1, eq:0};
 let isAdmin = false;
 let clickCount = 0;
 let clickTimer = null;
+let currentUserId = null;
+
+const ADMIN_FIXED_UUID = "00000000-0000-0000-0000-000000000001"; // ID partagé pour centraliser la vue admin
 
 const $ = id => document.getElementById(id);
 const p2 = n => String(n).padStart(2,'0');
@@ -287,12 +290,16 @@ async function verifierSession() {
   if (session) {
     $('auth-screen').classList.add('hidden');
     const email = session.user.email;
+    
+    // Si c'est l'admin (Kévin), on utilise un ID partagé pour centraliser les deux comptes
     if (email.includes('admin') || email.includes('kevin')) {
       isAdmin = true;
+      currentUserId = ADMIN_FIXED_UUID;
       U = 'a';
     } else {
       isAdmin = false;
-      U = 'b';
+      currentUserId = session.user.id;
+      U = 'b'; // Prescillia sur son propre compte
     }
     await chargerCloud();
   } else {
@@ -321,14 +328,13 @@ async function seDeconnecter() {
 
 // --- CLOUD & SYNCHRO AUTOMATIQUE ---
 async function chargerCloud(silencieux = false){
-  if (navigator.onLine) {
+  if (navigator.onLine && currentUserId) {
     try {
-      const { data: { session } } = await supabaseClient.auth.getSession();
-      if (!session) return;
-      const token = session.access_token;
-
-      const res = await fetch(`${SB_URL}/rest/v1/app_data?user_id=eq.${session.user.id}`, {
-        headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${token}` }
+      const res = await fetch(`${SB_URL}/rest/v1/app_data?user_id=eq.${currentUserId}`, {
+        headers: { 
+          'apikey': SB_KEY, 
+          'Authorization': `Bearer ${(await supabaseClient.auth.getSession()).data.session.access_token}` 
+        }
       });
       if (res.ok){
         const data = await res.json();
@@ -358,7 +364,7 @@ async function chargerCloud(silencieux = false){
 
 async function sauver(){
   localStorage.setItem('mon_budget_local_data', JSON.stringify(S));
-  if (navigator.onLine) {
+  if (navigator.onLine && currentUserId) {
     await sauverCloudForce();
   } else {
     majStatutReseau(false);
@@ -367,18 +373,17 @@ async function sauver(){
 
 async function sauverCloudForce(){
   try {
-    const { data: { session } } = await supabaseClient.auth.getSession();
-    if (!session) return;
+    const session = (await supabaseClient.auth.getSession()).data.session;
+    if (!session || !currentUserId) return;
     const token = session.access_token;
-    const userId = session.user.id;
 
-    const checkRes = await fetch(`${SB_URL}/rest/v1/app_data?user_id=eq.${userId}`, {
+    const checkRes = await fetch(`${SB_URL}/rest/v1/app_data?user_id=eq.${currentUserId}`, {
       headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${token}` }
     });
     const existing = await checkRes.json();
 
     if (existing && existing.length > 0) {
-      await fetch(`${SB_URL}/rest/v1/app_data?user_id=eq.${userId}`, {
+      await fetch(`${SB_URL}/rest/v1/app_data?user_id=eq.${currentUserId}`, {
         method: 'PATCH',
         headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
         body: JSON.stringify({ payload: S })
@@ -387,7 +392,7 @@ async function sauverCloudForce(){
       await fetch(`${SB_URL}/rest/v1/app_data`, {
         method: 'POST',
         headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
-        body: JSON.stringify({ user_id: userId, payload: S })
+        body: JSON.stringify({ user_id: currentUserId, payload: S })
       });
     }
   } catch(e){ 
@@ -420,7 +425,6 @@ function brut(uid, hingga){
       const mm = e && e.m !== undefined ? e.m : g.m;
       const ll = e && e.l !== undefined ? e.l : g.l;
       const cc = e && e.c !== undefined ? e.c : g.c;
-      // Par défaut exclu (non coché = false)
       const point = e && e.checked !== undefined ? e.checked : (g.checked && g.checked[k] ? true : false);
       if (dd <= hingga) r.push({u:uid, d:dd, l:ll, m:mm, c:cc, g, k, checked: point});
     }
@@ -451,10 +455,6 @@ function projections(uid, hingga){
 
 const mouvements = (uid, j) => brut(uid, j).concat(projections(uid, j));
 
-// Soldes calculés :
-// - Réel (Banque) : toutes les opérations passées (<= aujourd'hui) SAUF celles qui sont cochées (ex: chèques en attente)
-// - Théorique : toutes les opérations passées (<= aujourd'hui), sans exception
-// - Fin de mois : toutes les opérations jusqu'au dernier jour du mois courant
 const soldeReelBanque = (uid, date) => {
   const mv = mouvements(uid, date).filter(x => x.d <= date && !x.checked);
   return usr(uid).init + somme(mv);
@@ -506,7 +506,6 @@ function ligne(x, s){
   const t = today(), i = S.ops.indexOf(x), id = x.proj ? 'p'+x.k : cle(x); ROWS[id] = x;
   const del = x.proj ? '' : `<button class="del-btn" onclick="event.stopPropagation();${i>=0?`supprimer(${i})`:`retirer('${id}')`}">✕</button>`;
   const checkClass = x.checked ? 'check-btn checked' : 'check-btn';
-  // Si coché, on affiche une icône d'attente (ex: sablier ou point orange) pour signaler qu'elle est exclue du réel
   const checkIcon = x.checked ? '⏳' : '';
   const checkElement = x.proj ? '' : `<div class="${checkClass}" onclick="basculerCheck(event, '${id}')" title="Cocher pour exclure du solde Réel (ex: chèque en attente)">${checkIcon}</div>`;
 
@@ -552,7 +551,7 @@ function synthese(t){
     box('Fin de mois', soldeFinDeMois(U, t));
 
   const prev = (n, r) => `<div class="metric-box"><div class="metric-label" style="font-weight:700;color:var(--text)">${n}</div>
-    <div class="mu" style="margin-top:4px">Mini : <span class="${r.s<0?'red':''}" style="color:var(--text)">${eur(r.s)}</span></div></div>`;
+    <div class="mu" style="margin-top:4px">Mini : <span class="${r.s<0?'red':''}" style="color:var(--text)">${eur(r.s)}</span> (${fd(r.d)})</div></div>`;
   $('prev').innerHTML = prev('Mois en cours', mini(U, t.slice(0,7))) + prev('Mois suivant', mini(U, suiv));
   $('dern').innerHTML = mouvements(U, t).sort((a, b) => b.d.localeCompare(a.d)).slice(0, 10).map(x => ligne(x)).join('') || '<p class="mu" style="text-align:center">Aucune opération</p>';
   const reg = S.ops.find(o => o.reg === M), b = $('eqBadge');
