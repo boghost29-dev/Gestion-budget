@@ -296,11 +296,9 @@ async function chargerCloud(silencieux = false){
         const data = await res.json();
         if (data && data.length > 0 && data[0].payload){
           const remoteData = data[0].payload;
-          // Si le nombre d'opérations change ou diffère, on met à jour
           if (JSON.stringify(remoteData) !== JSON.stringify(S)){
             S = remoteData;
             localStorage.setItem('mon_budget_local_data', JSON.stringify(S));
-            // Ne rafraîchit l'affichage que si aucun modal n'est ouvert pour ne pas perturber la saisie
             const modalOuverte = !$('m-op').classList.contains('hidden') || !$('m-tpl').classList.contains('hidden') || !$('m-reg').classList.contains('hidden');
             if (!silencieux || !modalOuverte) {
               rendre();
@@ -539,7 +537,7 @@ function ouvrirReg(ym){
 }
 
 function validerReg(){
-  const c = commun(RM), d = $('r-d'].value; if (!d) return; // Note: corrigé dans le code global ci-dessous
+  const c = commun(RM), d = $('r-d').value; if (!d) return;
   S.ops = S.ops.filter(o => o.reg !== RM);
   if (Math.abs(c.e) >= .005){
     const [du, cr] = c.e > 0 ? [1, 0] : [0, 1], a = Math.abs(c.e);
