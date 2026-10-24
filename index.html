@@ -3,14 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Mes Comptes</title>
+<title>Mes Comptes - Sécurisé</title>
 
 <!-- Manifest WebApp directement intégré pour l'installation mobile -->
-<link rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogIk1lcyBDb21wdGVzIiwKICAic2hvcnRfbmFtZSI6ICJDb21wdGVzIiwKICAic3RhcnRfdXJsIjogIi4vIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjMDkwZDE2IiwKICAidGhlbWVfY29sb3IiOiAiIzA5MGQxNiIsCiAgImljb25zIjogWwogICAgewogICAgICAic3JjIjogImRhdGE6aW1hZ2Uvc3ZnK3htbCw8c3ZnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zycgdmlld0JveD0nMCAwIDEwMCAxMDAnPjxyZWN0IHdpZHRoPScxMDAnIGhlaWdodD0nMTAwJyByeD0nMjInIGZpbGw9JyUwOTBkMTYnLz48cGF0aCBkPSdNNTAgMTUgTDE1IDQ1IEwyNSA0NSBMMjUgODIgTDc1IDgy LDc1IDQ1IEw4NSA0NSBaJyBmaWxsPSclMjNmZmZmZmYnLz48dGV4dCB4PSc1MCUnIHk9JzY3JScgZm9udC1zaXplPSczMicgZm9udC13ZWlnaHQ9JzkwMCcgZm9udC1mYW1pbHk9J3NhbnMtc2VyaWYnIHRleHQtYW5jaG9yPSdtaWRkbGUnIGZpbGw9JyUwOTBkMTYnPsK1PC90ZXh0Pjwvc3ZnPiIsCiAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInR5cGUiOiAiaW1hZ2Uvc3ZnK3htbCIsCiAgICAgICJwdXJwb3NlIjogImFueSBtYXJrYWJsZSIKICAgIH0KICBdCn0=">
-
-<!-- Icône SVG pour Favoris, Onglets et Écran d'accueil -->
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23090d16'/><path d='M50 15 L15 45 L25 45 L25 82 L75 82 L75 45 L85 45 Z' fill='%23ffffff'/><text x='50%' y='67%' font-size='32' font-weight='900' font-family='sans-serif' text-anchor='middle' fill='%23090d16'>€</text></svg>">
-<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23090d16'/><path d='M50 15 L15 45 L25 45 L25 82 L75 82 L75 45 L85 45 Z' fill='%23ffffff'/><text x='50%' y='67%' font-size='32' font-weight='900' font-family='sans-serif' text-anchor='middle' fill='%23090d16'>€</text></svg>">
+<link rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogIk1lcyBDb21wdGVzIiwKICAic3RhcnRfdXJsIjogIi4vIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjMDkwZDE2IiwKICAidGhlbWVfY29sb3IiOiICIjMDkwZDE2IiwKICAiaWNvbnMiOiBbX30=">
 
 <!-- Configuration WebApp Plein Écran -->
 <meta name="mobile-web-app-capable" content="yes">
@@ -18,28 +14,29 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#090d16">
 
+<!-- Inclusion du client officiel Supabase JS -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
 :root{--bg:#090d16;--card-bg:rgba(30,41,59,.75);--border:rgba(255,255,255,.08);--text:#f8fafc;--text-muted:#94a3b8;--accent:#6366f1;--accent-gradient:linear-gradient(135deg,#6366f1 0%,#a855f7 100%);--green:#10b981;--red:#f43f5e;--warning:#f59e0b;--radius:20px;
  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 *{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;-webkit-tap-highlight-color:transparent}
 html,body{background:var(--bg);color:var(--text);width:100%;height:100%;overflow:hidden}
+
+/* Écran de connexion */
+#auth-screen{position:absolute;top:0;left:0;width:100%;height:100%;background:var(--bg);display:flex;justify-content:center;align-items:center;z-index:999;padding:20px}
+.login-card{background:var(--card-bg);border:1px solid var(--border);padding:24px;border-radius:var(--radius);width:100%;max-width:380px;box-shadow:0 10px 25px rgba(0,0,0,0.5)}
+.login-title{font-size:1.4rem;font-weight:800;text-align:center;margin-bottom:20px;background:linear-gradient(to right,#fff,#94a3b8);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+
 .app-frame{width:100%;max-width:430px;height:100%;margin:0 auto;background:rgba(9,13,22,.95);display:flex;flex-direction:column;position:relative}
 
 /* Bandeau statut réseau hors ligne */
 #net-status {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  background: #f59e0b;
-  color: #000;
-  text-align: center;
-  padding: 6px 12px;
-  font-size: 0.78rem;
-  font-weight: 700;
-  z-index: 1000;
-  transition: transform 0.3s ease;
-  transform: translateY(-100%);
+  top: 0; left: 0; right: 0;
+  background: #f59e0b; color: #000; text-align: center;
+  padding: 6px 12px; font-size: 0.78rem; font-weight: 700;
+  z-index: 1000; transition: transform 0.3s ease; transform: translateY(-100%);
   box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
 #net-status.show { transform: translateY(0); }
@@ -82,18 +79,39 @@ nav.ios-nav{position:absolute;bottom:0;left:0;width:100%;background:rgba(15,23,4
 label{font-size:.78rem;color:var(--text-muted);display:flex;flex-direction:column;gap:4px;font-weight:500}
 label.row{flex-direction:row;align-items:center;gap:8px;color:var(--text)}
 input,select,textarea{background:rgba(15,23,42,.9);border:1px solid var(--border);border-radius:12px;padding:11px;color:var(--text);font-size:.92rem;width:100%;outline:none}
+input[type="date"], input[type="month"] { color-scheme: dark; }
 input[type=checkbox]{width:16px;height:16px}
 details{background:rgba(15,23,42,.2);border:1px solid var(--border);border-radius:12px;padding:10px 14px;margin-bottom:8px}
 summary{font-weight:600;cursor:pointer;color:var(--text);font-size:.85rem;outline:none}
 .mu{font-size:.78rem;color:var(--text-muted)}
 #toast{position:fixed;left:16px;right:16px;bottom:calc(92px + env(safe-area-inset-bottom,0px));max-width:398px;margin:0 auto;background:#1e293b;border:1px solid var(--border);padding:10px 14px;border-radius:12px;display:none;z-index:300;font-size:.85rem}
+#auth-error{color:var(--red);font-size:.8rem;text-align:center;margin-top:6px}
 </style>
 </head>
 <body>
+
+<!-- ÉCRAN DE CONNEXION SÉCURISÉ -->
+<div id="auth-screen">
+  <div class="login-card">
+    <div class="login-title">Mes Comptes</div>
+    <div class="fm">
+      <label>Email de connexion
+        <input type="email" id="auth-email" placeholder="admin@budget.local ou prescillia@budget.local">
+      </label>
+      <label>Mot de passe
+        <input type="password" id="auth-pass" placeholder="••••••••">
+      </label>
+      <button class="btn-primary" onclick="seConnecter()">Se connecter</button>
+      <button class="btn-primary btn-ghost" onclick="seDeconnecter()" style="margin-top:4px">Se déconnecter</button>
+      <div id="auth-error"></div>
+    </div>
+  </div>
+</div>
+
 <div class="app-frame">
  <div id="net-status">⚠️ Mode hors ligne - Vos données sont sauvegardées localement</div>
  <header>
-  <div class="app-title">Mes Comptes</div>
+  <div class="app-title" id="header-title">Mes Comptes</div>
   <div class="user-selector" id="seg"></div>
  </header>
  <main>
@@ -146,7 +164,12 @@ summary{font-weight:600;cursor:pointer;color:var(--text);font-size:.85rem;outlin
     <p class="mu" style="margin:10px 0 6px">Importer un fichier de sauvegarde .json :</p>
     <input type="file" accept=".json,application/json" onchange="lireFichier(this,importerJSON)">
    </div>
-   <!-- ZONE DE TEST MASQUÉE PAR DÉFAUT -->
+   <!-- BOUTON DE DÉCONNEXION -->
+   <div class="card">
+    <div class="card-title">Session</div>
+    <button class="btn-primary btn-ghost" style="color:var(--red);margin-bottom:0" onclick="seDeconnecter()">Se déconnecter</button>
+   </div>
+   <!-- ZONE DE TEST MASQUÉE -->
    <div class="card" id="zone-test-card" style="display:none">
     <div class="card-title">Zone de test</div>
     <button id="raz" class="btn-primary btn-ghost" style="color:var(--red);margin-bottom:0" onclick="raz()">Remise à zéro complète</button>
@@ -174,36 +197,38 @@ summary{font-weight:600;cursor:pointer;color:var(--text);font-size:.85rem;outlin
   <button class="btn-primary" onclick="enregistrer()">Enregistrer</button></div>
 </div></div>
 
-<!-- MODAL RÉFÉRENCE FIXE (OPTIONS) -->
+<!-- MODAL RÉFÉRENCE FIXE -->
 <div id="m-tpl" class="modal hidden"><div class="modal-content">
  <div style="display:flex;justify-content:space-between;align-items:center"><h3 id="t-t" style="font-size:1.05rem">Référence fixe mensuelle</h3><button class="del-btn" onclick="fermer('m-tpl')">✕</button></div>
  <div class="fm">
-  <label>Libellé<input id="t-l" placeholder="Ex : Salaire de base, Loyer…"></label>
+  <label>Libellé<input id="t-l" placeholder="Ex : Salaire, Loyer…"></label>
   <label>Montant de référence (€)<input type="number" step="0.01" id="t-m"></label>
-  <label>Type<select id="t-t2"><option value="-1">Débit (Dépense récurrente)</option><option value="1">Crédit (Revenu récurrent)</option></select></label>
-  <label>Répartition<select id="t-c"><option value="0">Personnel</option><option value="1">Charge commune (50/50)</option></select></label>
-  <label>Date / Jour du mois (choisir une date)<input type="date" id="t-j"></label>
-  <p class="mu">Les changements valent pour toutes les échéances de cette référence.</p>
-  <button class="btn-primary" onclick="enregistrerTpl()">Sauvegarder le modèle</button></div>
+  <label>Type<select id="t-t2"><option value="-1">Débit</option><option value="1">Crédit</option></select></label>
+  <label>Répartition<select id="t-c"><option value="0">Personnel</option><option value="1">Charge commune</option></select></label>
+  <label>Date / Jour du mois<input type="date" id="t-j"></label>
+  <label>Date de fin (optionnel)<input type="date" id="t-f"></label>
+  <button class="btn-primary" onclick="enregistrerTpl()">Sauvegarder</button></div>
 </div></div>
 
 <!-- MODAL RÈGLEMENT -->
 <div id="m-reg" class="modal hidden"><div class="modal-content">
- <div style="display:flex;justify-content:space-between;align-items:center"><h3 style="font-size:1.05rem">Équilibre des charges du mois</h3><button class="del-btn" onclick="fermer('m-reg')">✕</button></div>
+ <div style="display:flex;justify-content:space-between;align-items:center"><h3 style="font-size:1.05rem">Équilibre des charges</h3><button class="del-btn" onclick="fermer('m-reg')">✕</button></div>
  <div id="r-det" style="font-size:.85rem;color:var(--text-muted);margin:12px 0"></div>
  <div class="fm"><label>Date du règlement<input type="date" id="r-d"></label>
-  <button class="btn-primary" onclick="validerReg()">Valider le règlement (créer les opérations)</button>
-  <button class="btn-primary btn-ghost" onclick="annulerReg()">Annuler le règlement de ce mois</button></div>
+  <button class="btn-primary" onclick="validerReg()">Valider le règlement</button>
+  <button class="btn-primary btn-ghost" onclick="annulerReg()">Annuler le règlement</button></div>
 </div></div>
 <div id="toast"></div>
 
 <script>
 const SB_URL = 'https://spbqnbstlnczaensilge.supabase.co';
 const SB_KEY = 'sb_publishable_efoSjjwy88avztgJUwg1zA_op-pIFDd';
+const supabaseClient = window.supabase.createClient(SB_URL, SB_KEY);
 
 const vide = () => ({users:[{id:'a',nom:'Kévin',init:0},{id:'b',nom:'Prescillia',init:0}], ops:[], regles:[]});
 let S = vide(), U = 'a', T = 'synth', M = '', ED = '', ET = -1, RM = '', ROWS = {};
 const F = {deb:1, cre:1, men:1, pon:1, com:1, roll:1, eq:0};
+let isAdmin = false;
 let showTestZone = false;
 
 const $ = id => document.getElementById(id);
@@ -212,129 +237,135 @@ const iso = d => d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate());
 const today = () => iso(new Date());
 const eur = n => n.toLocaleString('fr-FR',{style:'currency',currency:'EUR'});
 const esc = s => String(s).replace(/[&<>"]/g, c => '&#'+c.charCodeAt(0)+';');
-const fd = d => d.slice(8)+'/'+d.slice(5,7)+'/'+d.slice(0,4);
+const fd = d => d.slice(8)+'-'+d.slice(5,7)+'-'+d.slice(0,4);
 const usr = id => S.users.find(u => u.id === id);
 const somme = l => l.reduce((a, x) => a + x.m, 0);
 
+const safeDateIso = (y, m, day) => {
+  const nb = new Date(y, m + 1, 0).getDate();
+  return iso(new Date(y, m, Math.min(day, nb)));
+};
+
 function msg(t){
   const e = $('toast');
-  e.textContent = t;
-  e.style.display = 'block';
+  e.textContent = t; e.style.display = 'block';
   clearTimeout(msg.h);
   msg.h = setTimeout(() => e.style.display = 'none', 4500);
 }
 
-// --- GESTION ET AFFICHAGE DU STATUT RÉSEAU HORS LIGNE ---
-function majStatutReseau() {
-  const el = $('net-status');
-  if (!navigator.onLine) {
-    el.textContent = '⚠️ Mode hors ligne - Vos modifications sont enregistrées localement';
-    el.className = 'show';
-  } else {
-    el.textContent = '⚡ Connexion rétablie - Synchronisation en cours...';
-    el.className = 'show online';
-    sauver().then(() => {
-      setTimeout(() => { el.className = ''; }, 2500);
-    });
-  }
-}
-
-window.addEventListener('online', majStatutReseau);
-window.addEventListener('offline', majStatutReseau);
-
-// Détecter l'utilisateur via l'URL (ex: ?user=prescillia ou ?u=b)
-function detecterUserUrl() {
-  const params = new URLSearchParams(window.location.search);
-  const uParam = params.get('user') || params.get('u');
-  
-  if (uParam) {
-    const pLower = uParam.toLowerCase();
-    if (pLower.includes('prescillia') || pLower === 'b') {
-      U = 'b';
-      localStorage.setItem('mon_budget_user', 'b');
-    } else if (pLower.includes('kevin') || pLower.includes('kévin') || pLower === 'a') {
+// --- AUTHENTIFICATION ---
+async function verifierSession() {
+  const { data: { session } } = await supabaseClient.auth.getSession();
+  if (session) {
+    $('auth-screen').classList.add('hidden');
+    // Déterminer si c'est l'admin ou Prescillia
+    const email = session.user.email;
+    if (email.includes('admin') || email.includes('kevin')) {
+      isAdmin = true;
       U = 'a';
-      localStorage.setItem('mon_budget_user', 'a');
+    } else {
+      isAdmin = false;
+      U = 'b'; // Verrouillé sur Prescillia
     }
+    chargerCloud();
+  } else {
+    $('auth-screen').classList.remove('hidden');
   }
 }
 
-async function chargerCloud(){
-  detecterUserUrl();
-  
-  // Lecture du secours local si disponible (Hors ligne)
-  const localBackup = localStorage.getItem('mon_budget_local_data');
-  if (localBackup) {
-    try { S = JSON.parse(localBackup); } catch(e){}
+async function seConnecter() {
+  const email = $('auth-email').value.trim();
+  const password = $('auth-pass').value;
+  const errorEl = $('auth-error');
+  errorEl.textContent = '';
+
+  const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+  if (error) {
+    errorEl.textContent = "Identifiant ou mot de passe incorrect.";
+  } else {
+    verifierSession();
   }
+}
+
+async function seDeconnecter() {
+  await supabaseClient.auth.signOut();
+  location.reload();
+}
+
+// --- CLOUD & SYNCHRO SÉCURISÉE ---
+async function chargerCloud(){
+  const localBackup = localStorage.getItem('mon_budget_local_data');
+  if (localBackup) { try { S = JSON.parse(localBackup); } catch(e){} }
   
   if (navigator.onLine) {
     try {
-      const res = await fetch(`${SB_URL}/rest/v1/app_data?id=eq.1`, {
+      const { data: { user } } = await supabaseClient.auth.getUser();
+      if (!user) return;
+
+      const res = await fetch(`${SB_URL}/rest/v1/app_data?user_id=eq.${user.id}`, {
         headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
       });
       if (res.ok){
         const data = await res.json();
-        if (data && data.length > 0 && data[0].payload && Object.keys(data[0].payload).length > 0){
+        if (data && data.length > 0 && data[0].payload){
           S = data[0].payload;
           localStorage.setItem('mon_budget_local_data', JSON.stringify(S));
-          
-          const params = new URLSearchParams(window.location.search);
-          if (!params.get('user') && !params.get('u')) {
-            const localUser = localStorage.getItem('mon_budget_user');
-            U = (localUser && S.users.some(u => u.id === localUser)) ? localUser : (S.users[0] ? S.users[0].id : 'a');
-          }
-          
-          rendre();
-          msg('Données synchronisées depuis Supabase.');
         }
       }
     } catch(e){ console.error('Erreur chargement cloud', e); }
-  } else {
-    majStatutReseau();
   }
-  
-  const params = new URLSearchParams(window.location.search);
-  if (!params.get('user') && !params.get('u')) {
-    const localUser = localStorage.getItem('mon_budget_user');
-    U = (localUser && S.users.some(u => u.id === localUser)) ? localUser : (S.users[0] ? S.users[0].id : 'a');
-  }
+  if (!isAdmin) U = 'b'; // Sécurité : Non-admin forcé sur son profil
   rendre();
 }
 
 async function sauver(){
-  // 1. Sauvegarde locale immédiate (Sécurité hors ligne)
   localStorage.setItem('mon_budget_local_data', JSON.stringify(S));
-
-  // 2. Synchronisation Cloud Supabase si en ligne
   if (navigator.onLine) {
     try {
-      await fetch(`${SB_URL}/rest/v1/app_data?id=eq.1`, {
-        method: 'PATCH',
-        headers: {
-          'apikey': SB_KEY,
-          'Authorization': `Bearer ${SB_KEY}`,
-          'Content-Type': 'application/json',
-          'Prefer': 'return=minimal'
-        },
-        body: JSON.stringify({ payload: S })
+      const { data: { user } } = await supabaseClient.auth.getUser();
+      if (!user) return;
+
+      // Vérifier si une ligne existe déjà pour cet utilisateur
+      const checkRes = await fetch(`${SB_URL}/rest/v1/app_data?user_id=eq.${user.id}`, {
+        headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
       });
-    } catch(e){ console.error('Erreur sauvegarde cloud', e); msg('Sauvegarde locale effectuée.'); }
+      const existing = await checkRes.json();
+
+      if (existing && existing.length > 0) {
+        // Mise à jour (PATCH)
+        await fetch(`${SB_URL}/rest/v1/app_data?user_id=eq.${user.id}`, {
+          method: 'PATCH',
+          headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+          body: JSON.stringify({ payload: S })
+        });
+      } else {
+        // Insertion (POST)
+        await fetch(`${SB_URL}/rest/v1/app_data`, {
+          method: 'POST',
+          headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+          body: JSON.stringify({ user_id: user.id, payload: S })
+        });
+      }
+    } catch(e){ console.error('Erreur sauvegarde cloud', e); }
   }
 }
 
+// --- LOGIQUE MÉTIER ---
 function brut(uid, jusqua){
   const r = S.ops.filter(o => o.u === uid && o.d <= jusqua);
   for (const g of S.regles.filter(g => g.u === uid)){
     const [y, m0] = g.debut.split('-').map(Number);
     for (let m = m0 - 1; ; m++){
-      const nb = new Date(y, m + 1, 0).getDate(), d = iso(new Date(y, m, Math.min(g.jour, nb)));
+      const d = safeDateIso(y, m, g.jour);
       if (iso(new Date(y, m - 1, 1)) > jusqua || (g.fin && d > g.fin)) break;
       if (d < g.debut) continue;
       const k = d.slice(0,7), e = g.exc && g.exc[k];
       if (e && e.skip) continue;
-      const dd = e && e.d ? e.d : d, mm = e === undefined ? g.m : (typeof e === 'object' ? e.m : e);
-      if (dd <= jusqua) r.push({u:uid, d:dd, l:g.l, m:mm, c:g.c, g, k});
+      const dd = e && e.d ? e.d : d;
+      const mm = e && e.m !== undefined ? e.m : g.m;
+      const ll = e && e.l !== undefined ? e.l : g.l;
+      const cc = e && e.c !== undefined ? e.c : g.c;
+      if (dd <= jusqua) r.push({u:uid, d:dd, l:ll, m:mm, c:cc, g, k});
     }
   }
   return r;
@@ -352,11 +383,11 @@ function projections(uid, jusqua){
   const n = new Date(), r = [];
   for (let i = 1; i <= 2; i++){
     const ym = iso(new Date(n.getFullYear(), n.getMonth()+i, 1)).slice(0,7), d = ym+'-12';
-    if (d > jusqua || S.ops.some(o => o.reg === ym)) continue;
+    if (d > hingga || S.ops.some(o => o.reg === ym)) continue;
     const c = commun(ym); if (Math.abs(c.e) < .005) continue;
     const [du, cr] = c.e > 0 ? [1, 0] : [0, 1], a = Math.abs(c.e), debiteur = S.users[du].id === uid;
     if (!debiteur && S.users[cr].id !== uid) continue;
-    r.push({u:uid, d, l:'Règlement charges communes (projection '+(debiteur ? '→ '+S.users[cr].nom : '← '+S.users[du].nom)+')', m:debiteur ? -a : a, c:false, proj:true, k:ym});
+    r.push({u:uid, d, l:'Règlement charges communes (projection)', m:debiteur ? -a : a, c:false, proj:true, k:ym});
   }
   return r;
 }
@@ -382,89 +413,23 @@ function ligne(x, s){
   const del = x.proj ? '' : `<button class="del-btn" onclick="event.stopPropagation();${i>=0?`supprimer(${i})`:`retirer('${id}')`}">✕</button>`;
   return `<div class="op-item ${x.d===t?'today-op':''}" style="${x.d>t?'opacity:.7':''}" onclick="${x.proj?`ouvrirReg('${x.k}')`:`ouvrir('${id}')`}">
    <div class="op-info">
-    <div class="op-label">${esc(x.l)} ${x.g?'🔄':''} ${x.c?'🤝':''} ${x.proj?'👩‍❤️‍👨':''}${x.d===t?' <span class="badge badge-warning" style="font-size:.6rem;padding:2px 5px">Aujourd’hui</span>':''}</div>
+    <div class="op-label">${esc(x.l)} ${x.g?'🔄':''} ${x.c?'🤝':''} ${x.proj?'👩‍❤️‍👨':''}</div>
     <div class="op-sub">${fd(x.d)}${s===undefined?'':' · solde '+eur(s)}</div>
    </div>
    <div class="op-right"><div class="op-amount ${x.m<0?'red':'green'}">${x.m>0?'+':''}${eur(x.m)}</div>${del}</div>
   </div>`;
 }
 
-// Clics pour déverrouiller (10) ou verrouiller (7) les utilisateurs
-let clickCount = 0;
-let clickTimer = null;
-
-function handleUserClick(targetUid){
-  if (!S.showMultiButtons) {
-    clickCount++;
-    clearTimeout(clickTimer);
-    if (clickCount >= 10){
-      clickCount = 0;
-      S.showMultiButtons = true;
-      sauver();
-      rendre();
-      msg('Mode multi-utilisateurs déverrouillé.');
-    } else {
-      clickTimer = setTimeout(() => { clickCount = 0; }, 1500);
-    }
-    return;
-  }
-
-  if (targetUid !== U) {
-    setU(targetUid);
-    clickCount = 0;
-    return;
-  }
-
-  clickCount++;
-  clearTimeout(clickTimer);
-  if (clickCount >= 7){
-    clickCount = 0;
-    S.showMultiButtons = false;
-    sauver();
-    rendre();
-    msg('Choix des utilisateurs verrouillé.');
-  } else {
-    clickTimer = setTimeout(() => { clickCount = 0; }, 1500);
-  }
-}
-
-// 10 clics sur l'onglet Options pour débloquer/bloquer la zone de test
-let testClickCount = 0;
-let testClickTimer = null;
-
-function gererClicOptions(){
-  T = 'options';
-  rendre();
-  
-  testClickCount++;
-  clearTimeout(testClickTimer);
-  
-  if (testClickCount >= 10){
-    testClickCount = 0;
-    showTestZone = !showTestZone;
-    $('zone-test-card').style.display = showTestZone ? 'block' : 'none';
-    msg(showTestZone ? 'Zone de test débloquée.' : 'Zone de test verrouillée.');
-  } else {
-    testClickTimer = setTimeout(() => {
-      testClickCount = 0;
-    }, 1500);
-  }
-}
-
-function setU(id){
-  U = id;
-  localStorage.setItem('mon_budget_user', id);
-  rendre();
-}
-
 function rendre(){
   ROWS = {}; const t = today(); if (!M) M = t.slice(0,7);
   
-  if (S.showMultiButtons){
-    $('seg').innerHTML = S.users.map(u => `<button class="user-btn ${u.id===U?'active':''}" onclick="handleUserClick('${u.id}')">${esc(u.nom)}</button>`).join('');
+  if (isAdmin) {
+    // Admin peut basculer entre les profils
+    $('seg').innerHTML = S.users.map(u => `<button class="user-btn ${u.id===U?'active':''}" onclick="U='${u.id}';rendre()">${esc(u.nom)}</button>`).join('');
   } else {
-    const activeUser = usr(U) || S.users[0];
-    $('seg').innerHTML = `<button class="user-btn active" onclick="handleUserClick('${activeUser ? activeUser.id : 'a'}')" title="Appuyez 10 fois pour déverrouiller">${esc(activeUser ? activeUser.nom : 'Utilisateur')}</button>`;
+    // Utilisateur simple : affichage fixe de son nom
+    const activeUser = usr(U) || S.users[1];
+    $('seg').innerHTML = `<button class="user-btn active">${esc(activeUser.nom)}</button>`;
   }
   
   for (const v of ['synth','detail','options']){
@@ -473,11 +438,7 @@ function rendre(){
   synthese(t); detail();
   
   const activeUser = usr(U);
-  if (activeUser){
-    $('p-n').value = activeUser.nom;
-    $('p-i').value = activeUser.init;
-  }
-  $('zone-test-card').style.display = showTestZone ? 'block' : 'none';
+  if (activeUser){ $('p-n').value = activeUser.nom; $('p-i').value = activeUser.init; }
 }
 
 function synthese(t){
@@ -485,10 +446,11 @@ function synthese(t){
   const box = (n, v) => `<div class="metric-box"><div class="metric-label">${n}</div><div class="metric-val ${v<0?'red':'green'}">${eur(v)}</div></div>`;
   $('apercu').innerHTML = box('Solde actuel', solde(U, t)) + box('Fin de mois estimé', solde(U, iso(new Date(y, m, 0))));
   const prev = (n, r) => `<div class="metric-box"><div class="metric-label" style="font-weight:700;color:var(--text)">${n}</div>
-    <div class="mu" style="margin-top:4px">Mini mois : <span class="${r.s<0?'red':''}" style="color:var(--text)">${eur(r.s)}</span></div><div class="mu" style="margin-top:2px">Date mini : <span style="color:var(--text)">${fd(r.d)}</span></div></div>`;
-  $('prev').innerHTML = prev('Mois en cours', mini(U, t.slice(0,7))) + prev('Mois suivant', mini(U, suiv));$('dern').innerHTML = mouvements(U, t).sort((a, b) => b.d.localeCompare(a.d)).slice(0, 10).map(x => ligne(x)).join('') || '<p class="mu" style="text-align:center">Aucune opération</p>';
+    <div class="mu" style="margin-top:4px">Mini : <span class="${r.s<0?'red':''}" style="color:var(--text)">${eur(r.s)}</span></div></div>`;
+  $('prev').innerHTML = prev('Mois en cours', mini(U, t.slice(0,7))) + prev('Mois suivant', mini(U, suiv));
+  $('dern').innerHTML = mouvements(U, t).sort((a, b) => b.d.localeCompare(a.d)).slice(0, 10).map(x => ligne(x)).join('') || '<p class="mu" style="text-align:center">Aucune opération</p>';
   const reg = S.ops.find(o => o.reg === M), b = $('eqBadge');
-  b.textContent = reg ? 'Validé ('+fd(reg.d)+')' : 'Détails / Règlement'; b.className = 'badge ' + (reg ? 'badge-success' : 'badge-warning');
+  b.textContent = reg ? 'Validé' : 'Détails / Règlement'; b.className = 'badge ' + (reg ? 'badge-success' : 'badge-warning');
   $('eq').innerHTML = `<span class="mu">${M}</span><br>${commun(M).txt}`;
 }
 
@@ -499,45 +461,13 @@ function detail(){
   const lignes = tous.filter(x => x.d.startsWith(M)).sort((a, b) => a.d.localeCompare(b.d))
     .map(x => { s += x.m; return {x, s}; });
   const ok = o => (o.x.m < 0 ? F.deb : F.cre) && (o.x.g ? F.men : F.pon) && (F.com || !o.x.c);
-  $('detailEq').classList.toggle('hidden', !F.eq);$('detailEqText').textContent = commun(M).txt;
-  const vis = lignes.filter(ok).reverse();
-  $('d-list').innerHTML = vis.map(o => ligne(o.x, F.roll ? o.s : undefined)).join('') || '<p class="mu" style="text-align:center;padding:10px">Aucune opération correspondante</p>';
+  $('detailEq').classList.toggle('hidden', !F.eq); $('detailEqText').textContent = commun(M).txt;
+  $('d-list').innerHTML = lignes.filter(ok).reverse().map(o => ligne(o.x, F.roll ? o.s : undefined)).join('') || '<p class="mu" style="text-align:center">Aucune opération</p>';
   
-  // Affichage des références fixes avec le bouton 🔄 de resynchronisation M+1/M+2
   $('regles').innerHTML = S.regles.map((g, i) => g.u !== U ? '' : `<div class="op-item" onclick="ouvrirTpl(${i})">
-    <div class="op-info">
-      <div class="op-label">${esc(g.l)} ${g.c?'🤝':''}</div>
-      <div class="op-sub">Chaque mois le ${g.jour}</div>
-      ${Object.keys(g.exc||{}).filter(k => g.exc[k].skip).map(k => `<div class="op-sub">retiré : ${k.slice(5)}/${k.slice(0,4)} <u onclick="event.stopPropagation();delete S.regles[${i}].exc['${k}'];sauver();rendre()">annuler</u></div>`).join('')}
-    </div>
-    <div class="op-right">
-      <div class="op-amount ${g.m<0?'red':'green'}">${g.m>0?'+':''}${eur(g.m)}</div>
-      <button class="del-btn" style="background:rgba(99,102,241,0.25);color:#818cf8;margin-right:4px;" title="Réinitialiser et synchroniser sur M+1 et M+2" onclick="event.stopPropagation();refreshSingleTemplate(${i})">🔄</button>
-      <button class="del-btn" onclick="event.stopPropagation();S.regles.splice(${i},1);sauver();rendre()">✕</button>
-    </div>
-  </div>`).join('') || '<p class="mu" style="text-align:center">Aucune référence fixe.</p>';
-}
-
-function refreshSingleTemplate(i) {
-  const g = S.regles[i];
-  if (!g) return;
-
-  const n = new Date();
-  let countUpdated = 0;
-
-  for (let mOffset = 1; mOffset <= 2; mOffset++) {
-    const targetDate = new Date(n.getFullYear(), n.getMonth() + mOffset, 1);
-    const ym = iso(targetDate).slice(0, 7);
-
-    if (g.exc && g.exc[ym]) {
-      delete g.exc[ym];
-      countUpdated++;
-    }
-  }
-
-  sauver();
-  rendre();
-  msg(`Synchronisation de "${g.l}" effectuée pour M+1 et M+2 !`);
+    <div class="op-info"><div class="op-label">${esc(g.l)} ${g.c?'🤝':''}</div><div class="op-sub">Chaque mois le ${g.jour}</div></div>
+    <div class="op-right"><div class="op-amount ${g.m<0?'red':'green'}">${eur(g.m)}</div></div>
+  </div>`).join('') || '<p class="mu" style="text-align:center">Aucune référence.</p>';
 }
 
 function decaler(n){
@@ -550,202 +480,70 @@ const fermer = id => $(id).classList.add('hidden');
 const ouvrirM = id => $(id).classList.remove('hidden');
 
 function saveParams(){
-  const u = usr(U);
-  if(!u) return;
+  const u = usr(U); if(!u) return;
   u.nom = $('p-n').value.trim() || u.nom;
-  u.init = parseFloat($('p-i').value.replace(',', '.').replace('−', '-')) || 0;
-  sauver();
-  rendre();
-  msg('Paramètres enregistrés.');
+  u.init = parseFloat($('p-i').value.replace(',', '.')) || 0;
+  sauver(); rendre(); msg('Paramètres enregistrés.');
 }
 
 function ouvrir(id){
-  ED = id || ''; const x = ED ? ROWS[ED] : null, men = ED[0] === 'r';
-  $('m-t').textContent = x ? 'Modifier l’opération' : 'Nouvelle opération';
-  $('f-l').value = x ? x.l : ''; 
-  $('f-m').value = x ? Math.abs(x.m) : ''; 
-  $('f-t').value = x && x.m > 0 ? '1' : '-1';$('f-c').value = x && x.c ? '1' : '0'; 
-  $('f-d').value = x ? x.d : today(); 
-  $('f-r').checked = false; 
-  
-  ['f-t','f-c'].forEach(i => $(i).disabled = men);$('f-l').disabled = false;
-  
-  $('f-rbox').classList.toggle('hidden', !!ED);$('f-note').textContent = men ? 'Règle mensuelle : l’ajustement de montant ne s’appliquera qu’à ce mois-ci.' : '';
+  ED = id || ''; const x = ED ? ROWS[ED] : null;
+  $('m-t').textContent = x ? 'Modifier' : 'Nouvelle opération';
+  $('f-l').value = x ? x.l : ''; $('f-m').value = x ? Math.abs(x.m) : '';
+  $('f-t').value = x && x.m > 0 ? '1' : '-1'; $('f-c').value = x && x.c ? '1' : '0';
+  $('f-d').value = x ? x.d : today(); $('f-rbox').classList.toggle('hidden', !!ED);
   ouvrirM('m-op');
 }
 
 function enregistrer(){
-  const l = $('f-l').value.trim(), v = Math.abs(parseFloat($('f-m').value)), d =$('f-d').value, sg = +$('f-t').value, c =$('f-c').value === '1';
-  if (!l || isNaN(v) || !d) return msg('Libellé, montant et date sont requis.');
-  if (ED[0] === 'r'){
-    const [r, k] = ED.slice(1).split('|'), g = S.regles[+r];
-    g.exc = g.exc || {}; g.exc[k] = {m:(g.m < 0 ? -1 : 1) * v, d};
-  } else if (ED[0] === 'o') Object.assign(S.ops[+ED.slice(1)], {l, m:sg*v, d, c});
-  else if ($('f-r').checked){
-    S.regles.push({u:U, l, m:sg*v, c, jour:+d.slice(8), debut:d});
-  } else S.ops.push({u:U, l, m:sg*v, d, c});
+  const l = $('f-l').value.trim(), v = Math.abs(parseFloat($('f-m').value)), d = $('f-d').value, sg = +$('f-t').value, c = $('f-c').value === '1';
+  if (!l || isNaN(v) || !d) return msg('Champs requis.');
+  S.ops.push({u:U, l, m: sg * v, d, c});
   sauver(); fermer('m-op'); rendre();
 }
 
 function supprimer(i){ S.ops.splice(i, 1); sauver(); rendre(); }
 function retirer(id){
-  const [r, k] = id.slice(1).split('|'), g = S.regles[+r];
-  g.exc = g.exc || {}; g.exc[k] = {skip:true}; sauver(); rendre(); msg('Échéance retirée.');
-}
-
-function ouvrirTpl(i){
-  ET = i; const g = i >= 0 ? S.regles[i] : null;
-  $('t-t').textContent = g ? 'Modifier la référence fixe' : 'Référence fixe mensuelle';
-  $('t-l').value = g ? g.l : ''; 
-  $('t-m').value = g ? Math.abs(g.m) : ''; 
-  $('t-t2').value = g && g.m > 0 ? '1' : '-1';$('t-c').value = g && g.c ? '1' : '0'; 
-  
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, '0');
-  const day = g ? String(g.jour).padStart(2, '0') : '01';
-  $('t-j').value = `${year}-${month}-${day}`;
-  
-  ouvrirM('m-tpl');
-}
-
-function enregistrerTpl(){
-  const l = $('t-l').value.trim(), v = Math.abs(parseFloat($('t-m').value)), dateVal =$('t-j').value, sg = +$('t-t2').value, c =$('t-c').value === '1';
-  if (!l || isNaN(v) || !dateVal) return msg('Libellé, montant et date sont requis.');
-  
-  const jour = parseInt(dateVal.slice(8), 10);
-  
-  if (ET >= 0) {
-    Object.assign(S.regles[ET], {l, m:sg*v, c, jour});
-  } else {
-    const n = new Date(); 
-    S.regles.push({u:U, l, m:sg*v, c, jour, debut:iso(new Date(n.getFullYear(), n.getMonth(), 1))}); 
-  }
-  
-  sauver(); fermer('m-tpl'); rendre();
+  const [rIdx, k] = [ +id.slice(1).split('|')[0], id.slice(1).split('|')[1] ];
+  S.regles[rIdx].exc = S.regles[rIdx].exc || {};
+  S.regles[rIdx].exc[k] = { skip: true };
+  sauver(); rendre();
 }
 
 function ouvrirReg(ym){
-  RM = ym || M; const c = commun(RM), reg = S.ops.some(o => o.reg === RM);
-  $('r-det').innerHTML = `Mois : <b style="color:var(--text)">${RM}</b><br>Total charges communes : <b style="color:var(--text)">${eur(c.tot)}</b><br>`
-    + S.users.map((u, i) => `- Payé par ${esc(u.nom)} : ${eur(c.p[i])}<br>`).join('') + `<br><b style="color:var(--text)">${c.txt}</b>${reg ? '<br>✔ Déjà validé' : ''}`;
+  RM = ym || M; const c = commun(RM);
+  $('r-det').innerHTML = `Mois : <b>${RM}</b><br>Total : <b>${eur(c.tot)}</b><br>${c.txt}`;
   $('r-d').value = today(); ouvrirM('m-reg');
 }
 
 function validerReg(){
-  const c = commun(RM), d = $('r-d').value; if (!d) return msg('Choisis une date.');
+  const c = commun(RM), d = $('r-d').value; if (!d) return;
   S.ops = S.ops.filter(o => o.reg !== RM);
   if (Math.abs(c.e) >= .005){
     const [du, cr] = c.e > 0 ? [1, 0] : [0, 1], a = Math.abs(c.e);
-    S.ops.push({u:S.users[du].id, l:'Règlement charges communes ('+S.users[cr].nom+')', m:-a, d, c:false, reg:RM});
-    S.ops.push({u:S.users[cr].id, l:'Règlement charges communes ('+S.users[du].nom+')', m:a, d, c:false, reg:RM});
+    S.ops.push({u:S.users[du].id, l:'Règlement charges', m:-a, d, c:false, reg:RM});
+    S.ops.push({u:S.users[cr].id, l:'Règlement charges', m:a, d, c:false, reg:RM});
   }
-  sauver(); fermer('m-reg'); rendre(); msg('Règlement enregistré.');
+  sauver(); fermer('m-reg'); rendre();
 }
-function annulerReg(){ S.ops = S.ops.filter(o => o.reg !== RM); sauver(); fermer('m-reg'); rendre(); msg('Règlement annulé.'); }
+function annulerReg(){ S.ops = S.ops.filter(o => o.reg !== RM); sauver(); fermer('m-reg'); rendre(); }
 
-function lireFichier(inp, fn){ const f = inp.files[0]; if (!f) return; const r = new FileReader(); r.onload = () => fn(r.result); r.readAsText(f); inp.value = ''; }
+function lireFichier(inp, fn){ const f = inp.files[0]; if(!f)return; const r=new FileReader(); r.onload=()=>fn(r.result); r.readAsText(f); inp.value=''; }
 function exporter(){
-  const t = JSON.stringify(S, null, 1);
   const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([t], {type:'application/json'}));
-  a.download = 'sauvegarde_comptes_complet.json';
-  document.body.appendChild(a); a.click(); a.remove();
-  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-  msg('Sauvegarde téléchargée.');
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(S)], {type:'application/json'}));
+  a.download = 'sauvegarde.json'; a.click();
 }
-
 function importerJSON(txt){
-  let d; try { d = JSON.parse(txt); } catch(e) { return msg('JSON illisible.'); }
-  if (Array.isArray(d.users) && Array.isArray(d.ops) && Array.isArray(d.regles)){
-    S = d;
-    U = S.users[0] ? S.users[0].id : 'a';
-    sauver();
-    rendre();
-    return msg('Sauvegarde JSON restaurée et synchronisée avec succès !');
-  }
-  msg('Format de fichier JSON non reconnu.');
+  try { S = JSON.parse(txt); sauver(); rendre(); msg('Restauré !'); } catch(e){ msg('Erreur JSON'); }
 }
+function gererClicOptions(){ T = 'options'; rendre(); }
 
-function parseCSV(t){
-  const L = []; let c = [], f = '', q = false;
-  for (let i = 0; i < t.length; i++){
-    const x = t[i];
-    if (q){ if (x === '"'){ if (t[i+1] === '"'){ f += '"'; i++; } else q = false; } else q = false; }
-    else if (x === '"') q = true;
-    else if (x === ',') { c.push(f); f = ''; }
-    else if (x === '\n' || x === '\r'){ if (x === '\r' && t[i+1] === '\n') i++; c.push(f); L.push(c); c = []; f = ''; }
-    else f += x;
-  }
-  if (f || c.length){ c.push(f); L.push(c); }
-  return L;
-}
-
-const nombre = s => parseFloat(String(s).replace(/[^\d,.-]/g, '').replace(',', '.')) || 0;
-
-function importer(txt){
-  const L = parseCSV(txt), h = L[0].map(x => x.trim()), col = n => h.indexOf(n), first = (...ns) => { for (const n of ns){ const i = h.findIndex(x => x.startsWith(n)); if (i >= 0) return i; } return -1; };
-  const iT = col('Type'), iD = col('Date'), iL = col('Libellé'), iM = first('Montant'), iR = first('Récurrence','Récurrente'), iC = col('Charges Communes'), iP = col('Répartition');
-  if (iD < 0 || iM < 0 || iT < 0) return msg('Colonnes Type, Date et Montant introuvables.');
-  const n0 = new Date(), deb = iso(new Date(n0.getFullYear(), n0.getMonth(), 1));
-  const vus = new Set(S.ops.filter(o => o.u === U).map(o => [o.d, o.l, o.m].join('|'))), reg = {}, mx = {}; let top = '';
-  let n = 0;
-  for (const r of L.slice(1)){
-    let dd = (r[iD] || '').trim().split('/'); if (dd.length < 3) dd = (r[iD] || '').trim().split('-').reverse(); if (dd.length < 3) continue;
-    const d = `${dd[2]}-${dd[1].padStart(2,'0')}-${dd[0].padStart(2,'0')}`, sg = r[iT] === 'Débit' ? -1 : 1;
-    const m = sg * Math.abs(nombre(r[iM])), l = r[iL] || '', c = (iC >= 0 && r[iC] === 'Oui') || (iP >= 0 && r[iP] === 'Commune'), k0 = l+'|'+sg+'|'+(c ? 1 : 0);
-    if (/^Règlement charges communes \(Projection/i.test(l)) continue;
-    if (r[iR] === 'Mensuel' || r[iR] === 'Oui'){
-      if (d > (mx[k0] || '')) mx[k0] = d; if (d > top) top = d;
-      const g = reg[k0];
-      if (!g || (d >= deb ? (g.ref < deb || d < g.ref) : (g.ref < deb && d > g.ref))) reg[k0] = {u:U, l, m, c, jour:+dd[0], debut:deb, ref:d};
-      if (d >= deb) continue;
-    }
-    const k = [d, l, m].join('|'); if (vus.has(k)) continue;
-    S.ops.push(/^Règlement charges communes/.test(l) ? {u:U, d, l, m, c, reg:d.slice(0,7)} : {u:U, d, l, m, c}); n++;
-  }
-  let nr = 0;
-  for (const [k, g] of Object.entries(reg)){
-    if (g.ref < deb) continue;
-    g.debut = g.ref.slice(0,7) + '-01';
-    delete g.ref; S.regles.push(g); nr++;
-  }
-  sauver(); rendre(); msg(`${n} opérations et ${nr} références fixes importées.`);
-}
-
-let armee = false;
-function raz(){
-  const b = $('raz');
-  if (!armee){ armee = true; b.textContent = 'Confirmer : tout effacer'; msg('Appuie une 2e fois pour confirmer (5 s).'); setTimeout(() => { armee = false; b.textContent = 'Remise à zéro complète'; }, 5000); return; }
-  armee = false; b.textContent = 'Remise à zéro complète'; S = vide(); U = S.users[0].id; sauver(); rendre(); msg('Remise à zéro effectuée.');
-}
-
-$('filtres').innerHTML = [['deb','Débits'],['cre','Crédits'],['men','Récurrentes'],['pon','Ponctuelles'],['com','Charges communes',1],['roll','Afficher le solde glissant',1],['eq','Afficher l’équilibre des charges',1]]
+$('filtres').innerHTML = [['deb','Débits'],['cre','Crédits'],['men','Récurrentes'],['pon','Ponctuelles'],['com','Communes',1],['roll','Solde glissant',1],['eq','Équilibre',1]]
   .map(([k, n, w]) => `${k==='roll'?'<div style="grid-column:span 2;border-top:1px solid var(--border)"></div>':''}<label class="row" style="${w?'grid-column:span 2':''}"><input type="checkbox" ${F[k]?'checked':''} onchange="F['${k}']=this.checked;rendre()">${n}</label>`).join('');
 
-chargerCloud();
-
-// Enregistrement dynamique du Service Worker pour l'accès hors ligne PWA
-if ('serviceWorker' in navigator) {
-  const swCode = `
-    const CACHE_NAME = 'comptes-v1';
-    self.addEventListener('install', e => {
-      e.waitUntil(
-        caches.open(CACHE_NAME).then(cache => cache.addAll(['./']))
-      );
-      self.skipWaiting();
-    });
-    self.addEventListener('fetch', e => {
-      if (e.request.method !== 'GET') return;
-      e.respondWith(
-        fetch(e.request).catch(() => caches.match(e.request))
-      );
-    });
-  `;
-  const blob = new Blob([swCode], { type: 'application/javascript' });
-  const swUrl = URL.createObjectURL(blob);
-  navigator.serviceWorker.register(swUrl).catch(err => console.log('SW reg error:', err));
-}
+// Lancer la vérification de session au démarrage
+verifierSession();
 </script>
 </body>
 </html>
