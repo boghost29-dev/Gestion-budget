@@ -5,16 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Mes Comptes - Sécurisé</title>
 
-<!-- Manifest WebApp directement intégré pour l'installation mobile -->
+<!-- Manifest WebApp -->
 <link rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogIk1lcyBDb21wdGVzIiwKICAic3RhcnRfdXJsIjogIi4vIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjMDkwZDE2IiwKICAidGhlbWVfY29sb3IiOiICIjMDkwZDE2IiwKICAiaWNvbnMiOiBbX30=">
 
-<!-- Configuration WebApp Plein Écran -->
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#090d16">
 
-<!-- Inclusion du client officiel Supabase JS -->
+<!-- Supabase JS -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
@@ -32,8 +31,7 @@ html,body{background:var(--bg);color:var(--text);width:100%;height:100%;overflow
 
 /* Bandeau statut réseau hors ligne */
 #net-status {
-  position: absolute;
-  top: 0; left: 0; right: 0;
+  position: absolute; top: 0; left: 0; right: 0;
   background: #f59e0b; color: #000; text-align: center;
   padding: 6px 12px; font-size: 0.78rem; font-weight: 700;
   z-index: 1000; transition: transform 0.3s ease; transform: translateY(-100%);
@@ -154,12 +152,10 @@ summary{font-weight:600;cursor:pointer;color:var(--text);font-size:.85rem;outlin
     </div>
    </details>
    <details class="card"><summary class="card-title" style="margin-bottom:0;display:flex;justify-content:space-between;align-items:center;width:100%"><span>📌 Références fixes</span><button class="badge badge-success" onclick="event.preventDefault();ouvrirTpl(-1)">+ Ajouter modèle</button></summary><div style="margin-top:10px" id="regles"></div></details>
-   <div class="card"><div class="card-title">Import de fichier CSV (Journal)</div>
-    <p class="mu" style="margin-bottom:10px">Onglet Journal exporté de Sheets, pour l’utilisateur affiché.</p>
-    <input type="file" accept=".csv,text/csv" onchange="lireFichier(this,importer)">
-   </div>
+
    <div class="card"><div class="card-title">Données Cloud / Sauvegarde</div>
-    <button class="btn-primary btn-ghost" onclick="exporter()">Exporter la sauvegarde JSON</button>
+    <button class="btn-primary btn-ghost" onclick="exporterJSON()">Exporter la sauvegarde JSON</button>
+    <button class="btn-primary btn-ghost" onclick="exporterCSV()">Exporter au format CSV</button>
     <p class="mu" style="margin:10px 0 6px">Importer un fichier de sauvegarde .json :</p>
     <input type="file" accept=".json,application/json" onchange="lireFichier(this,importerJSON)">
    </div>
@@ -346,7 +342,7 @@ function brut(uid, jusqua){
     const [y, m0] = g.debut.split('-').map(Number);
     for (let m = m0 - 1; ; m++){
       const d = safeDateIso(y, m, g.jour);
-      if (iso(new Date(y, m - 1, 1)) > hingga || (g.fin && d > g.fin)) break;
+      if (iso(new Date(y, m - 1, 1)) > jusqua || (g.fin && d > g.fin)) break;
       if (d < g.debut) continue;
       const k = d.slice(0,7), e = g.exc && g.exc[k];
       if (e && e.skip) continue;
@@ -354,7 +350,7 @@ function brut(uid, jusqua){
       const mm = e && e.m !== undefined ? e.m : g.m;
       const ll = e && e.l !== undefined ? e.l : g.l;
       const cc = e && e.c !== undefined ? e.c : g.c;
-      if (dd <= hingga) r.push({u:uid, d:dd, l:ll, m:mm, c:cc, g, k});
+      if (dd <= jusqua) r.push({u:uid, d:dd, l:ll, m:mm, c:cc, g, k});
     }
   }
   return r;
@@ -368,11 +364,11 @@ function commun(ym){
   return {p, tot, e, txt};
 }
 
-function projections(uid, hingga){
+function projections(uid, jusqua){
   const n = new Date(), r = [];
   for (let i = 1; i <= 2; i++){
     const ym = iso(new Date(n.getFullYear(), n.getMonth()+i, 1)).slice(0,7), d = ym+'-12';
-    if (d > hingga || S.ops.some(o => o.reg === ym)) continue;
+    if (d > jusqua || S.ops.some(o => o.reg === ym)) continue;
     const c = commun(ym); if (Math.abs(c.e) < .005) continue;
     const [du, cr] = c.e > 0 ? [1, 0] : [0, 1], a = Math.abs(c.e), debiteur = S.users[du].id === uid;
     if (!debiteur && S.users[cr].id !== uid) continue;
@@ -516,13 +512,36 @@ function validerReg(){
 function annulerReg(){ S.ops = S.ops.filter(o => o.reg !== RM); sauver(); fermer('m-reg'); rendre(); }
 
 function lireFichier(inp, fn){ const f = inp.files[0]; if(!f)return; const r=new FileReader(); r.onload=()=>fn(r.result); r.readAsText(f); inp.value=''; }
-function exporter(){
+
+function exporterJSON(){
   const a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob([JSON.stringify(S)], {type:'application/json'}));
   a.download = 'sauvegarde.json'; a.click();
 }
 
-// --- FONCTION IMPORT JSON CORRIGÉE ET SÉCURISÉE ---
+// --- NOUVELLE FONCTION EXPORT CSV ---
+function exporterCSV(){
+  let csvContent = "Date;Utilisateur;Libelle;Montant (€);Type;Charge Commune\n";
+  const opsTriees = [...S.ops].sort((a,b) => b.d.localeCompare(a.d));
+  
+  opsTriees.forEach(o => {
+    const uObj = usr(o.u);
+    const uNom = uObj ? uObj.nom : o.u;
+    const typeOp = o.m < 0 ? "Débit" : "Crédit";
+    const commune = o.c ? "Oui" : "Non";
+    const libellePropre = `"${(o.l || '').replace(/"/g, '""')}"`;
+    const montantPropre = o.m.toString().replace('.', ',');
+    
+    csvContent += `${o.d};${uNom};${libellePropre};${montantPropre};${typeOp};${commune}\n`;
+  });
+
+  const blob = new Blob(["\ufeff" + csvContent], { type: 'text/csv;charset=utf-8;' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'export_operations.csv';
+  a.click();
+}
+
 function importerJSON(txt){
   let d; try { d = JSON.parse(txt); } catch(e) { return msg('JSON illisible.'); }
   
