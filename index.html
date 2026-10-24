@@ -336,13 +336,13 @@ async function sauver(){
 }
 
 // --- LOGIQUE MÉTIER ---
-function brut(uid, jusqua){
-  const r = S.ops.filter(o => o.u === uid && o.d <= jusqua);
+function brut(uid, hingga){
+  const r = S.ops.filter(o => o.u === uid && o.d <= hingga);
   for (const g of S.regles.filter(g => g.u === uid)){
     const [y, m0] = g.debut.split('-').map(Number);
     for (let m = m0 - 1; ; m++){
       const d = safeDateIso(y, m, g.jour);
-      if (iso(new Date(y, m - 1, 1)) > jusqua || (g.fin && d > g.fin)) break;
+      if (iso(new Date(y, m - 1, 1)) > hingga || (g.fin && d > g.fin)) break;
       if (d < g.debut) continue;
       const k = d.slice(0,7), e = g.exc && g.exc[k];
       if (e && e.skip) continue;
@@ -350,7 +350,7 @@ function brut(uid, jusqua){
       const mm = e && e.m !== undefined ? e.m : g.m;
       const ll = e && e.l !== undefined ? e.l : g.l;
       const cc = e && e.c !== undefined ? e.c : g.c;
-      if (dd <= jusqua) r.push({u:uid, d:dd, l:ll, m:mm, c:cc, g, k});
+      if (dd <= hingga) r.push({u:uid, d:dd, l:ll, m:mm, c:cc, g, k});
     }
   }
   return r;
@@ -364,11 +364,11 @@ function commun(ym){
   return {p, tot, e, txt};
 }
 
-function projections(uid, jusqua){
+function projections(uid, hingga){
   const n = new Date(), r = [];
   for (let i = 1; i <= 2; i++){
     const ym = iso(new Date(n.getFullYear(), n.getMonth()+i, 1)).slice(0,7), d = ym+'-12';
-    if (d > jusqua || S.ops.some(o => o.reg === ym)) continue;
+    if (d > hingga || S.ops.some(o => o.reg === ym)) continue;
     const c = commun(ym); if (Math.abs(c.e) < .005) continue;
     const [du, cr] = c.e > 0 ? [1, 0] : [0, 1], a = Math.abs(c.e), debiteur = S.users[du].id === uid;
     if (!debiteur && S.users[cr].id !== uid) continue;
@@ -466,7 +466,10 @@ function saveParams(){
   const u = usr(U); if(!u) return;
   u.nom = $('p-n').value.trim() || u.nom;
   u.init = parseFloat($('p-i').value.replace(',', '.')) || 0;
-  sauver(); rendre(); msg('Paramètres enregistrés.');
+  sauver().then(() => {
+    rendre();
+    msg('Paramètres enregistrés et synchronisés.');
+  });
 }
 
 function ouvrir(id){
@@ -519,7 +522,6 @@ function exporterJSON(){
   a.download = 'sauvegarde.json'; a.click();
 }
 
-// --- NOUVELLE FONCTION EXPORT CSV ---
 function exporterCSV(){
   let csvContent = "Date;Utilisateur;Libelle;Montant (€);Type;Charge Commune\n";
   const opsTriees = [...S.ops].sort((a,b) => b.d.localeCompare(a.d));
