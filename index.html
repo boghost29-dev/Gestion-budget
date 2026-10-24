@@ -102,7 +102,6 @@ summary{font-weight:600;cursor:pointer;color:var(--text);font-size:.85rem;outlin
         <input type="password" id="auth-pass" placeholder="••••••••">
       </label>
       <button class="btn-primary" onclick="seConnecter()">Se connecter</button>
-      <button class="btn-primary btn-ghost" onclick="seDeconnecter()" style="margin-top:4px">Se déconnecter</button>
       <div id="auth-error"></div>
     </div>
   </div>
@@ -169,11 +168,6 @@ summary{font-weight:600;cursor:pointer;color:var(--text);font-size:.85rem;outlin
     <div class="card-title">Session</div>
     <button class="btn-primary btn-ghost" style="color:var(--red);margin-bottom:0" onclick="seDeconnecter()">Se déconnecter</button>
    </div>
-   <!-- ZONE DE TEST MASQUÉE -->
-   <div class="card" id="zone-test-card" style="display:none">
-    <div class="card-title">Zone de test</div>
-    <button id="raz" class="btn-primary btn-ghost" style="color:var(--red);margin-bottom:0" onclick="raz()">Remise à zéro complète</button>
-   </div>
   </div>
  </main>
  <nav class="ios-nav">
@@ -229,7 +223,6 @@ const vide = () => ({users:[{id:'a',nom:'Kévin',init:0},{id:'b',nom:'Prescillia
 let S = vide(), U = 'a', T = 'synth', M = '', ED = '', ET = -1, RM = '', ROWS = {};
 const F = {deb:1, cre:1, men:1, pon:1, com:1, roll:1, eq:0};
 let isAdmin = false;
-let showTestZone = false;
 
 const $ = id => document.getElementById(id);
 const p2 = n => String(n).padStart(2,'0');
@@ -258,14 +251,13 @@ async function verifierSession() {
   const { data: { session } } = await supabaseClient.auth.getSession();
   if (session) {
     $('auth-screen').classList.add('hidden');
-    // Déterminer si c'est l'admin ou Prescillia
     const email = session.user.email;
     if (email.includes('admin') || email.includes('kevin')) {
       isAdmin = true;
       U = 'a';
     } else {
       isAdmin = false;
-      U = 'b'; // Verrouillé sur Prescillia
+      U = 'b';
     }
     chargerCloud();
   } else {
@@ -314,7 +306,7 @@ async function chargerCloud(){
       }
     } catch(e){ console.error('Erreur chargement cloud', e); }
   }
-  if (!isAdmin) U = 'b'; // Sécurité : Non-admin forcé sur son profil
+  if (!isAdmin) U = 'b';
   rendre();
 }
 
@@ -325,21 +317,18 @@ async function sauver(){
       const { data: { user } } = await supabaseClient.auth.getUser();
       if (!user) return;
 
-      // Vérifier si une ligne existe déjà pour cet utilisateur
       const checkRes = await fetch(`${SB_URL}/rest/v1/app_data?user_id=eq.${user.id}`, {
         headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
       });
       const existing = await checkRes.json();
 
       if (existing && existing.length > 0) {
-        // Mise à jour (PATCH)
         await fetch(`${SB_URL}/rest/v1/app_data?user_id=eq.${user.id}`, {
           method: 'PATCH',
           headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
           body: JSON.stringify({ payload: S })
         });
       } else {
-        // Insertion (POST)
         await fetch(`${SB_URL}/rest/v1/app_data`, {
           method: 'POST',
           headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
@@ -357,7 +346,7 @@ function brut(uid, jusqua){
     const [y, m0] = g.debut.split('-').map(Number);
     for (let m = m0 - 1; ; m++){
       const d = safeDateIso(y, m, g.jour);
-      if (iso(new Date(y, m - 1, 1)) > jusqua || (g.fin && d > g.fin)) break;
+      if (iso(new Date(y, m - 1, 1)) > hingga || (g.fin && d > g.fin)) break;
       if (d < g.debut) continue;
       const k = d.slice(0,7), e = g.exc && g.exc[k];
       if (e && e.skip) continue;
@@ -365,7 +354,7 @@ function brut(uid, jusqua){
       const mm = e && e.m !== undefined ? e.m : g.m;
       const ll = e && e.l !== undefined ? e.l : g.l;
       const cc = e && e.c !== undefined ? e.c : g.c;
-      if (dd <= jusqua) r.push({u:uid, d:dd, l:ll, m:mm, c:cc, g, k});
+      if (dd <= hingga) r.push({u:uid, d:dd, l:ll, m:mm, c:cc, g, k});
     }
   }
   return r;
@@ -379,7 +368,7 @@ function commun(ym){
   return {p, tot, e, txt};
 }
 
-function projections(uid, jusqua){
+function projections(uid, hingga){
   const n = new Date(), r = [];
   for (let i = 1; i <= 2; i++){
     const ym = iso(new Date(n.getFullYear(), n.getMonth()+i, 1)).slice(0,7), d = ym+'-12';
@@ -424,10 +413,8 @@ function rendre(){
   ROWS = {}; const t = today(); if (!M) M = t.slice(0,7);
   
   if (isAdmin) {
-    // Admin peut basculer entre les profils
     $('seg').innerHTML = S.users.map(u => `<button class="user-btn ${u.id===U?'active':''}" onclick="U='${u.id}';rendre()">${esc(u.nom)}</button>`).join('');
   } else {
-    // Utilisateur simple : affichage fixe de son nom
     const activeUser = usr(U) || S.users[1];
     $('seg').innerHTML = `<button class="user-btn active">${esc(activeUser.nom)}</button>`;
   }
@@ -534,15 +521,30 @@ function exporter(){
   a.href = URL.createObjectURL(new Blob([JSON.stringify(S)], {type:'application/json'}));
   a.download = 'sauvegarde.json'; a.click();
 }
+
+// --- FONCTION IMPORT JSON CORRIGÉE ET SÉCURISÉE ---
 function importerJSON(txt){
-  try { S = JSON.parse(txt); sauver(); rendre(); msg('Restauré !'); } catch(e){ msg('Erreur JSON'); }
+  let d; try { d = JSON.parse(txt); } catch(e) { return msg('JSON illisible.'); }
+  
+  const ops = d.ops || [];
+  const users = d.users || [{id:'a',nom:'Kévin',init:0},{id:'b',nom:'Prescillia',init:0}];
+  const regles = d.regles || [];
+
+  if (Array.isArray(users) && Array.isArray(ops) && Array.isArray(regles)){
+    S = { users, ops, regles };
+    U = S.users[0] ? S.users[0].id : 'a';
+    sauver();
+    rendre();
+    return msg('Sauvegarde JSON restaurée et synchronisée avec succès !');
+  }
+  msg('Format de fichier JSON non reconnu.');
 }
+
 function gererClicOptions(){ T = 'options'; rendre(); }
 
 $('filtres').innerHTML = [['deb','Débits'],['cre','Crédits'],['men','Récurrentes'],['pon','Ponctuelles'],['com','Communes',1],['roll','Solde glissant',1],['eq','Équilibre',1]]
   .map(([k, n, w]) => `${k==='roll'?'<div style="grid-column:span 2;border-top:1px solid var(--border)"></div>':''}<label class="row" style="${w?'grid-column:span 2':''}"><input type="checkbox" ${F[k]?'checked':''} onchange="F['${k}']=this.checked;rendre()">${n}</label>`).join('');
 
-// Lancer la vérification de session au démarrage
 verifierSession();
 </script>
 </body>
