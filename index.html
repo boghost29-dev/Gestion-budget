@@ -66,7 +66,7 @@ main{flex:1;overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column
 .op-right{display:flex;align-items:center;gap:8px}
 .op-amount{font-weight:700;font-size:.9rem;white-space:nowrap}
 .check-btn { background: rgba(255,255,255,.08); border: 1px solid var(--border); border-radius: 6px; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 0.75rem; color: var(--text-muted); }
-.check-btn.checked { background: var(--green); color: #fff; border-color: var(--green); }
+.check-btn.checked { background: var(--warning); color: #000; border-color: var(--warning); font-weight: bold; }
 .del-btn{color:var(--text-muted);font-size:.85rem;border:none;background:rgba(255,255,255,.06);width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
 nav.ios-nav{position:absolute;bottom:0;left:0;width:100%;background:rgba(15,23,42,.95);backdrop-filter:blur(15px);border-top:1px solid rgba(255,255,255,.1);display:flex;justify-content:space-around;padding:10px 0 16px;z-index:100}
 .nav-item{border:none;background:transparent;color:var(--text-muted);display:flex;flex-direction:column;align-items:center;gap:3px;font-size:.68rem;font-weight:600;cursor:pointer;width:33%}
@@ -170,7 +170,7 @@ summary{font-weight:600;cursor:pointer;color:var(--text);font-size:.85rem;outlin
  <nav class="ios-nav">
   <button class="nav-item active" id="nav-synth" onclick="T='synth';rendre()"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7zm4-3h2v10h-2zm4 6h2v4h-2z"/></svg>Synthèse</button>
   <button class="nav-item" id="nav-detail" onclick="T='detail';rendre()"><svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z"/></svg>Détail</button>
-  <button class="nav-item" id="nav-options" onclick="gererClicOptions()"><svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c-.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6-3.6z"/></svg>Options</button>
+  <button class="nav-item" id="nav-options" onclick="gererClicOptions()"><svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c-.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c-.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6-3.6z"/></svg>Options</button>
  </nav>
 </div>
 
@@ -420,6 +420,7 @@ function brut(uid, hingga){
       const mm = e && e.m !== undefined ? e.m : g.m;
       const ll = e && e.l !== undefined ? e.l : g.l;
       const cc = e && e.c !== undefined ? e.c : g.c;
+      // Par défaut exclu (non coché = false)
       const point = e && e.checked !== undefined ? e.checked : (g.checked && g.checked[k] ? true : false);
       if (dd <= hingga) r.push({u:uid, d:dd, l:ll, m:mm, c:cc, g, k, checked: point});
     }
@@ -451,11 +452,11 @@ function projections(uid, hingga){
 const mouvements = (uid, j) => brut(uid, j).concat(projections(uid, j));
 
 // Soldes calculés :
-// - Actuel (Réel Banque) : uniquement les opérations passées (<= aujourd'hui) ET cochées/pointées
-// - Théorique : toutes les opérations passées (<= aujourd'hui), qu'elles soient pointées ou non (vision chèques en attente inclus)
+// - Réel (Banque) : toutes les opérations passées (<= aujourd'hui) SAUF celles qui sont cochées (ex: chèques en attente)
+// - Théorique : toutes les opérations passées (<= aujourd'hui), sans exception
 // - Fin de mois : toutes les opérations jusqu'au dernier jour du mois courant
 const soldeReelBanque = (uid, date) => {
-  const mv = mouvements(uid, date).filter(x => x.d <= date && x.checked);
+  const mv = mouvements(uid, date).filter(x => x.d <= date && !x.checked);
   return usr(uid).init + somme(mv);
 };
 
@@ -505,8 +506,9 @@ function ligne(x, s){
   const t = today(), i = S.ops.indexOf(x), id = x.proj ? 'p'+x.k : cle(x); ROWS[id] = x;
   const del = x.proj ? '' : `<button class="del-btn" onclick="event.stopPropagation();${i>=0?`supprimer(${i})`:`retirer('${id}')`}">✕</button>`;
   const checkClass = x.checked ? 'check-btn checked' : 'check-btn';
-  const checkIcon = x.checked ? '✓' : '';
-  const checkElement = x.proj ? '' : `<div class="${checkClass}" onclick="basculerCheck(event, '${id}')" title="Pointer / Cocher (réel banque)">${checkIcon}</div>`;
+  // Si coché, on affiche une icône d'attente (ex: sablier ou point orange) pour signaler qu'elle est exclue du réel
+  const checkIcon = x.checked ? '⏳' : '';
+  const checkElement = x.proj ? '' : `<div class="${checkClass}" onclick="basculerCheck(event, '${id}')" title="Cocher pour exclure du solde Réel (ex: chèque en attente)">${checkIcon}</div>`;
 
   return `<div class="op-item ${x.d===t?'today-op':''}" style="${x.d>t?'opacity:.7':''}" onclick="${x.proj?`ouvrirReg('${x.k}')`:`ouvrir('${id}')`}">
    <div class="op-info">
@@ -644,7 +646,7 @@ function exporterJSON(){
 }
 
 function exporterCSV(){
-  let csvContent = "Date;Utilisateur;Libelle;Montant (€);Type;Charge Commune;Pointe\n";
+  let csvContent = "Date;Utilisateur;Libelle;Montant (€);Type;Charge Commune;Exclu du Réel\n";
   const opsTriees = [...S.ops].sort((a,b) => b.d.localeCompare(a.d));
   
   opsTriees.forEach(o => {
@@ -652,14 +654,14 @@ function exporterCSV(){
     const uNom = uObj ? uObj.nom : o.u;
     const typeOp = o.m < 0 ? "Débit" : "Crédit";
     const commune = o.c ? "Oui" : "Non";
-    const pointe = o.checked ? "Oui" : "Non";
+    const exclu = o.checked ? "Oui" : "Non";
     const libellePropre = `"${(o.l || '').replace(/"/g, '""')}"`;
     const montantPropre = o.m.toString().format ? o.m.toString().replace('.', ',') : o.m;
     
-    csvContent += `${o.d};${uNom};${libellePropre};${montantPropre};${typeOp};${commune};${pointe}\n`;
+    csvContent += `${o.d};${uNom};${libellePropre};${montantPropre};${typeOp};${commune};${exclu}\n`;
   });
 
-  const blob = new Blob(["\ufeff" + csvContent], { type: 'text/css;charset=utf-8;' });
+  const blob = new Blob(["\ufeff" + csvContent], { type: 'text/csv;charset=utf-8;' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = 'export_operations.csv';
