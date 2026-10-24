@@ -47,9 +47,10 @@ main{flex:1;overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column
 .tab{display:flex;flex-direction:column;gap:10px}
 .card{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px}
 .card-title{font-size:.78rem;font-weight:700;color:var(--text-muted);margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;text-transform:uppercase;letter-spacing:.5px}
+.metrics-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
 .metrics-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.metric-box{background:rgba(15,23,42,.6);border:1px solid var(--border);padding:10px 12px;border-radius:14px}
-.metric-label{font-size:.72rem;color:var(--text-muted)}.metric-val{font-size:1.1rem;font-weight:800;margin-top:4px}
+.metric-box{background:rgba(15,23,42,.6);border:1px solid var(--border);padding:8px 10px;border-radius:14px}
+.metric-label{font-size:.65rem;color:var(--text-muted)}.metric-val{font-size:.95rem;font-weight:800;margin-top:4px}
 .green{color:var(--green)}.red{color:var(--red)}
 .btn-primary{width:100%;background:var(--accent-gradient);color:#fff;border:none;padding:12px;border-radius:14px;font-weight:700;font-size:.9rem;cursor:pointer;box-shadow:0 4px 15px rgba(99,102,241,.3)}
 .btn-ghost{background:rgba(255,255,255,.08);box-shadow:none;margin-bottom:8px}
@@ -59,11 +60,13 @@ main{flex:1;overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column
 .op-item{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;margin-bottom:4px;border-radius:10px;border-bottom:1px solid var(--border);cursor:pointer}
 .op-item:last-child{border-bottom:none;margin-bottom:0}
 .op-item.today-op{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.5);box-shadow:0 0 10px rgba(245,158,11,.15)}
-.op-info{display:flex;flex-direction:column;gap:2px}
-.op-label{font-weight:600;font-size:.88rem;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.op-info{display:flex;flex-direction:column;gap:2px;flex:1;padding-right:8px}
+.op-label{font-weight:600;font-size:.85rem;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .op-sub{font-size:.7rem;color:var(--text-muted)}
 .op-right{display:flex;align-items:center;gap:8px}
 .op-amount{font-weight:700;font-size:.9rem;white-space:nowrap}
+.check-btn { background: rgba(255,255,255,.08); border: 1px solid var(--border); border-radius: 6px; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 0.75rem; color: var(--text-muted); }
+.check-btn.checked { background: var(--green); color: #fff; border-color: var(--green); }
 .del-btn{color:var(--text-muted);font-size:.85rem;border:none;background:rgba(255,255,255,.06);width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
 nav.ios-nav{position:absolute;bottom:0;left:0;width:100%;background:rgba(15,23,42,.95);backdrop-filter:blur(15px);border-top:1px solid rgba(255,255,255,.1);display:flex;justify-content:space-around;padding:10px 0 16px;z-index:100}
 .nav-item{border:none;background:transparent;color:var(--text-muted);display:flex;flex-direction:column;align-items:center;gap:3px;font-size:.68rem;font-weight:600;cursor:pointer;width:33%}
@@ -112,7 +115,7 @@ summary{font-weight:600;cursor:pointer;color:var(--text);font-size:.85rem;outlin
  <main>
   <!-- SYNTHÈSE -->
   <div id="tab-synth" class="tab">
-   <div class="card"><div class="card-title" style="margin-bottom:6px">Aperçu rapide</div><div class="metrics-grid" id="apercu"></div></div>
+   <div class="card"><div class="card-title" style="margin-bottom:6px">Aperçu rapide</div><div class="metrics-grid-3" id="apercu"></div></div>
    <div class="card-title" style="margin:2px 0 2px 2px">Prévisions mensuelles</div>
    <div class="metrics-grid" id="prev"></div>
    <button class="btn-primary" onclick="ouvrir()">+ Nouvelle opération</button>
@@ -167,7 +170,7 @@ summary{font-weight:600;cursor:pointer;color:var(--text);font-size:.85rem;outlin
  <nav class="ios-nav">
   <button class="nav-item active" id="nav-synth" onclick="T='synth';rendre()"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7zm4-3h2v10h-2zm4 6h2v4h-2z"/></svg>Synthèse</button>
   <button class="nav-item" id="nav-detail" onclick="T='detail';rendre()"><svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z"/></svg>Détail</button>
-  <button class="nav-item" id="nav-options" onclick="gererClicOptions()"><svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c-.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c-.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6-3.6z"/></svg>Options</button>
+  <button class="nav-item" id="nav-options" onclick="gererClicOptions()"><svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c-.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6-3.6z"/></svg>Options</button>
  </nav>
 </div>
 
@@ -246,8 +249,7 @@ function msg(t){
 function gererClicUserSelector() {
   clickCount++;
   clearTimeout(clickTimer);
-  clickTimer = setTimeout(() => { clickCount = 0; }, 2000); // Réinitialise après 2 secondes sans clic
-  
+  clickTimer = setTimeout(() => { clickCount = 0; }, 2000);
   if (clickCount >= 10) {
     clickCount = 0;
     isAdmin = !isAdmin;
@@ -264,7 +266,7 @@ function majStatutReseau(enLigne) {
     banner.textContent = "✓ Connecté - Synchronisé";
     banner.className = "show online";
     setTimeout(() => banner.classList.remove('show'), 3000);
-    sauverCloudForce(); // Pousse les modifications faites hors-ligne dès le retour du réseau
+    sauverCloudForce();
   } else {
     banner.textContent = "⚠️ Mode hors ligne - Sauvegarde locale active";
     banner.className = "show";
@@ -326,10 +328,7 @@ async function chargerCloud(silencieux = false){
       const token = session.access_token;
 
       const res = await fetch(`${SB_URL}/rest/v1/app_data?user_id=eq.${session.user.id}`, {
-        headers: { 
-          'apikey': SB_KEY, 
-          'Authorization': `Bearer ${token}` 
-        }
+        headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${token}` }
       });
       if (res.ok){
         const data = await res.json();
@@ -358,9 +357,7 @@ async function chargerCloud(silencieux = false){
 }
 
 async function sauver(){
-  // Sauvegarde locale immédiate en priorité absolue
   localStorage.setItem('mon_budget_local_data', JSON.stringify(S));
-  
   if (navigator.onLine) {
     await sauverCloudForce();
   } else {
@@ -376,33 +373,20 @@ async function sauverCloudForce(){
     const userId = session.user.id;
 
     const checkRes = await fetch(`${SB_URL}/rest/v1/app_data?user_id=eq.${userId}`, {
-      headers: { 
-        'apikey': SB_KEY, 
-        'Authorization': `Bearer ${token}` 
-      }
+      headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${token}` }
     });
     const existing = await checkRes.json();
 
     if (existing && existing.length > 0) {
       await fetch(`${SB_URL}/rest/v1/app_data?user_id=eq.${userId}`, {
         method: 'PATCH',
-        headers: { 
-          'apikey': SB_KEY, 
-          'Authorization': `Bearer ${token}`, 
-          'Content-Type': 'application/json', 
-          'Prefer': 'return=minimal' 
-        },
+        headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
         body: JSON.stringify({ payload: S })
       });
     } else {
       await fetch(`${SB_URL}/rest/v1/app_data`, {
         method: 'POST',
-        headers: { 
-          'apikey': SB_KEY, 
-          'Authorization': `Bearer ${token}`, 
-          'Content-Type': 'application/json', 
-          'Prefer': 'return=minimal' 
-        },
+        headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
         body: JSON.stringify({ user_id: userId, payload: S })
       });
     }
@@ -411,14 +395,12 @@ async function sauverCloudForce(){
   }
 }
 
-// Polling automatique toutes les 5 secondes en arrière-plan
 setInterval(() => {
   if (navigator.onLine && !document.hidden) {
     chargerCloud(true);
   }
 }, 5000);
 
-// Synchronisation quand la fenêtre reprend le focus
 window.addEventListener('focus', () => {
   verifierSession();
 });
@@ -438,7 +420,8 @@ function brut(uid, hingga){
       const mm = e && e.m !== undefined ? e.m : g.m;
       const ll = e && e.l !== undefined ? e.l : g.l;
       const cc = e && e.c !== undefined ? e.c : g.c;
-      if (dd <= hingga) r.push({u:uid, d:dd, l:ll, m:mm, c:cc, g, k});
+      const point = e && e.checked !== undefined ? e.checked : (g.checked && g.checked[k] ? true : false);
+      if (dd <= hingga) r.push({u:uid, d:dd, l:ll, m:mm, c:cc, g, k, checked: point});
     }
   }
   return r;
@@ -460,13 +443,33 @@ function projections(uid, hingga){
     const c = commun(ym); if (Math.abs(c.e) < .005) continue;
     const [du, cr] = c.e > 0 ? [1, 0] : [0, 1], a = Math.abs(c.e), debiteur = S.users[du].id === uid;
     if (!debiteur && S.users[cr].id !== uid) continue;
-    r.push({u:uid, d, l:'Règlement charges communes (projection)', m:debiteur ? -a : a, c:false, proj:true, k:ym});
+    r.push({u:uid, d, l:'Règlement charges communes (projection)', m:debiteur ? -a : a, c:false, proj:true, k:ym, checked:false});
   }
   return r;
 }
 
 const mouvements = (uid, j) => brut(uid, j).concat(projections(uid, j));
-const solde = (uid, date) => usr(uid).init + somme(mouvements(uid, date));
+
+// Soldes calculés :
+// - Actuel (Réel Banque) : uniquement les opérations passées (<= aujourd'hui) ET cochées/pointées
+// - Théorique : toutes les opérations passées (<= aujourd'hui), qu'elles soient pointées ou non (vision chèques en attente inclus)
+// - Fin de mois : toutes les opérations jusqu'au dernier jour du mois courant
+const soldeReelBanque = (uid, date) => {
+  const mv = mouvements(uid, date).filter(x => x.d <= date && x.checked);
+  return usr(uid).init + somme(mv);
+};
+
+const soldeTheorique = (uid, date) => {
+  const mv = mouvements(uid, date).filter(x => x.d <= date);
+  return usr(uid).init + somme(mv);
+};
+
+const soldeFinDeMois = (uid, date) => {
+  const [y, m] = date.split('-').map(Number);
+  const finMois = iso(new Date(y, m, 0));
+  const mv = mouvements(uid, finMois);
+  return usr(uid).init + somme(mv);
+};
 
 function mini(uid, ym){
   const [y, m] = ym.split('-').map(Number), deb = iso(new Date(y, m-1, 1)), fin = new Date(y, m, 0);
@@ -481,15 +484,40 @@ function mini(uid, ym){
 
 const cle = x => { const i = S.ops.indexOf(x); return i >= 0 ? 'o'+i : 'r'+S.regles.indexOf(x.g)+'|'+x.k; };
 
+function basculerCheck(event, id){
+  event.stopPropagation();
+  if (id.startsWith('o')) {
+    const idx = +id.slice(1);
+    S.ops[idx].checked = !S.ops[idx].checked;
+  } else if (id.startsWith('r')) {
+    const parts = id.slice(1).split('|');
+    const rIdx = +parts[0];
+    const k = parts[1];
+    S.regles[rIdx].exc = S.regles[rIdx].exc || {};
+    S.regles[rIdx].exc[k] = S.regles[rIdx].exc[k] || {};
+    S.regles[rIdx].exc[k].checked = !(S.regles[rIdx].exc[k].checked !== undefined ? S.regles[rIdx].exc[k].checked : (S.regles[rIdx].checked && S.regles[rIdx].checked[k]));
+  }
+  sauver();
+  rendre();
+}
+
 function ligne(x, s){
   const t = today(), i = S.ops.indexOf(x), id = x.proj ? 'p'+x.k : cle(x); ROWS[id] = x;
   const del = x.proj ? '' : `<button class="del-btn" onclick="event.stopPropagation();${i>=0?`supprimer(${i})`:`retirer('${id}')`}">✕</button>`;
+  const checkClass = x.checked ? 'check-btn checked' : 'check-btn';
+  const checkIcon = x.checked ? '✓' : '';
+  const checkElement = x.proj ? '' : `<div class="${checkClass}" onclick="basculerCheck(event, '${id}')" title="Pointer / Cocher (réel banque)">${checkIcon}</div>`;
+
   return `<div class="op-item ${x.d===t?'today-op':''}" style="${x.d>t?'opacity:.7':''}" onclick="${x.proj?`ouvrirReg('${x.k}')`:`ouvrir('${id}')`}">
    <div class="op-info">
     <div class="op-label">${esc(x.l)} ${x.g?'🔄':''} ${x.c?'🤝':''} ${x.proj?'👩‍❤️‍👨':''}</div>
     <div class="op-sub">${fd(x.d)}${s===undefined?'':' · solde '+eur(s)}</div>
    </div>
-   <div class="op-right"><div class="op-amount ${x.m<0?'red':'green'}">${x.m>0?'+':''}${eur(x.m)}</div>${del}</div>
+   <div class="op-right">
+    ${checkElement}
+    <div class="op-amount ${x.m<0?'red':'green'}">${x.m>0?'+':''}${eur(x.m)}</div>
+    ${del}
+   </div>
   </div>`;
 }
 
@@ -515,7 +543,12 @@ function rendre(){
 function synthese(t){
   const [y, m] = t.split('-').map(Number), suiv = iso(new Date(y, m, 1)).slice(0,7);
   const box = (n, v) => `<div class="metric-box"><div class="metric-label">${n}</div><div class="metric-val ${v<0?'red':'green'}">${eur(v)}</div></div>`;
-  $('apercu').innerHTML = box('Solde actuel', solde(U, t)) + box('Fin de mois estimé', solde(U, iso(new Date(y, m, 0))));
+  
+  $('apercu').innerHTML = 
+    box('Réel (Banque)', soldeReelBanque(U, t)) + 
+    box('Théorique', soldeTheorique(U, t)) + 
+    box('Fin de mois', soldeFinDeMois(U, t));
+
   const prev = (n, r) => `<div class="metric-box"><div class="metric-label" style="font-weight:700;color:var(--text)">${n}</div>
     <div class="mu" style="margin-top:4px">Mini : <span class="${r.s<0?'red':''}" style="color:var(--text)">${eur(r.s)}</span></div></div>`;
   $('prev').innerHTML = prev('Mois en cours', mini(U, t.slice(0,7))) + prev('Mois suivant', mini(U, suiv));
@@ -572,7 +605,7 @@ function ouvrir(id){
 function enregistrer(){
   const l = $('f-l').value.trim(), v = Math.abs(parseFloat($('f-m').value)), d = $('f-d').value, sg = +$('f-t').value, c = $('f-c').value === '1';
   if (!l || isNaN(v) || !d) return msg('Champs requis.');
-  S.ops.push({u:U, l, m: sg * v, d, c});
+  S.ops.push({u:U, l, m: sg * v, d, c, checked: false});
   sauver(); fermer('m-op'); rendre();
 }
 
@@ -595,8 +628,8 @@ function validerReg(){
   S.ops = S.ops.filter(o => o.reg !== RM);
   if (Math.abs(c.e) >= .005){
     const [du, cr] = c.e > 0 ? [1, 0] : [0, 1], a = Math.abs(c.e);
-    S.ops.push({u:S.users[du].id, l:'Règlement charges', m:-a, d, c:false, reg:RM});
-    S.ops.push({u:S.users[cr].id, l:'Règlement charges', m:a, d, c:false, reg:RM});
+    S.ops.push({u:S.users[du].id, l:'Règlement charges', m:-a, d, c:false, reg:RM, checked:false});
+    S.ops.push({u:S.users[cr].id, l:'Règlement charges', m:a, d, c:false, reg:RM, checked:false});
   }
   sauver(); fermer('m-reg'); rendre();
 }
@@ -611,7 +644,7 @@ function exporterJSON(){
 }
 
 function exporterCSV(){
-  let csvContent = "Date;Utilisateur;Libelle;Montant (€);Type;Charge Commune\n";
+  let csvContent = "Date;Utilisateur;Libelle;Montant (€);Type;Charge Commune;Pointe\n";
   const opsTriees = [...S.ops].sort((a,b) => b.d.localeCompare(a.d));
   
   opsTriees.forEach(o => {
@@ -619,13 +652,14 @@ function exporterCSV(){
     const uNom = uObj ? uObj.nom : o.u;
     const typeOp = o.m < 0 ? "Débit" : "Crédit";
     const commune = o.c ? "Oui" : "Non";
+    const pointe = o.checked ? "Oui" : "Non";
     const libellePropre = `"${(o.l || '').replace(/"/g, '""')}"`;
-    const montantPropre = o.m.toString().replace('.', ',');
+    const montantPropre = o.m.toString().format ? o.m.toString().replace('.', ',') : o.m;
     
-    csvContent += `${o.d};${uNom};${libellePropre};${montantPropre};${typeOp};${commune}\n`;
+    csvContent += `${o.d};${uNom};${libellePropre};${montantPropre};${typeOp};${commune};${pointe}\n`;
   });
 
-  const blob = new Blob(["\ufeff" + csvContent], { type: 'text/csv;charset=utf-8;' });
+  const blob = new Blob(["\ufeff" + csvContent], { type: 'text/css;charset=utf-8;' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = 'export_operations.csv';
