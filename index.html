@@ -255,7 +255,7 @@ async function verifierSession() {
       isAdmin = false;
       U = 'b';
     }
-    chargerCloud();
+    await chargerCloud();
   } else {
     $('auth-screen').classList.remove('hidden');
   }
@@ -280,11 +280,8 @@ async function seDeconnecter() {
   location.reload();
 }
 
-// --- CLOUD & SYNCHRO SÉCURISÉE ---
+// --- CLOUD & SYNCHRO FORCÉE ---
 async function chargerCloud(){
-  const localBackup = localStorage.getItem('mon_budget_local_data');
-  if (localBackup) { try { S = JSON.parse(localBackup); } catch(e){} }
-  
   if (navigator.onLine) {
     try {
       const { data: { user } } = await supabaseClient.auth.getUser();
@@ -298,10 +295,12 @@ async function chargerCloud(){
         if (data && data.length > 0 && data[0].payload){
           S = data[0].payload;
           localStorage.setItem('mon_budget_local_data', JSON.stringify(S));
+          console.log("Cloud chargé avec succès, nombre d'opérations :", S.ops.length);
         }
       }
     } catch(e){ console.error('Erreur chargement cloud', e); }
   }
+  
   if (!isAdmin) U = 'b';
   rendre();
 }
@@ -331,9 +330,15 @@ async function sauver(){
           body: JSON.stringify({ user_id: user.id, payload: S })
         });
       }
+      console.log("Sauvegarde cloud effectuée, total op :", S.ops.length);
     } catch(e){ console.error('Erreur sauvegarde cloud', e); }
   }
 }
+
+// Forcer le rechargement cloud dès que la page redevient active ou visible
+window.addEventListener('focus', () => {
+  verifierSession();
+});
 
 // --- LOGIQUE MÉTIER ---
 function brut(uid, hingga){
